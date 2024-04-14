@@ -1,0 +1,39 @@
+name: build
+
+on:
+  push:
+    branches:
+    - main
+        
+jobs:
+  buildpages:
+    runs-on:  ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.2.0
+      
+      - name: install
+        run: |
+          python3 -m pip install -U pip
+          python3 -m pip install -r requirements.txt
+          
+      - name: add_path
+        run: |
+          echo "/home/runner/.local/bin" >> $GITHUB_PATH
+          
+      - name: build
+        run: |
+          make html
+          touch _build/html/.nojekyll
+          ls -altr _build/html
+          
+      - name: deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          BRANCH: gh-pages
+          FOLDER: _build/html # The folder the action should deploy.
+          CLEAN: false # Automatically remove deleted files from the deploy branch
+          TARGET-FOLDER: docs
+     
+        
