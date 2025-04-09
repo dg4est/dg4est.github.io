@@ -2,6 +2,7 @@
 layout: docs
 title: Getting Started
 ---
+
 dg4est
 =========
 dg4est is a software framework designed to support the development of
