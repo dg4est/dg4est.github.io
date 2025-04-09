@@ -33,5 +33,6 @@ jobs:
         with:
           BRANCH: gh-pages
           FOLDER: _site
-          CLEAN: true
+          CLEAN: false
+          TARGET-FOLDER: docs
 # SIMPLILIFIED WORKFLOW FOR JEKYLL
