@@ -1,7 +1,9 @@
 ---
 layout: docs
-title: Getting Started
+title: Authors
+permalink: /docs/authors/
 ---
+
 
 # Authors
 
