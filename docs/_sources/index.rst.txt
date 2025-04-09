@@ -1,58 +1,11 @@
+---
+layout: default
+title: Home Page
+---
 .. DG4EST documentation master file, created by
    sphinx-quickstart on Sun Apr 14 15:08:20 2024.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
-
-.. Welcome to DG4EST's documentation!
-.. ==================================
-
-.. .. raw:: html
-
-..   <!-- Header Section -->
-   <header class="w-full text-white drop-shadow-xl font-bold text-xl md:text-2xl">
-     <div class="px-4 md:px-0 container mx-auto py-6 flex flex-row items-center justify-center md:justify-start gap-x-4">
-       <img src="_static/logo.png" alt="Project Logo" class="hidden md:inline h-6" />
-       <div>Project Name</div>
-     </div>
-   </header>
-
-.. .. raw:: html
-
-..   <!-- Hero Section & Navigation -->
-   <div class="px-4 md:px-0 container mx-auto flex flex-col gap-8 py-8 md:py-12">
-     <div class="flex flex-col md:flex-row items-center gap-10 md:gap-16 py-8 md:py-16">
-       <div class="w-full flex flex-col items-center md:items-start">
-         <img src="_static/logo.png" alt="Project Logo" class="h-20 md:h-24" />
-       </div>
-       <div class="w-full text-white text-md md:text-lg text-justify font-semibold">
-         Lorem ipsum dolor sit amet consectetur adipiscing elit.
-       </div>
-     </div>
-     <nav class="flex justify-center">
-       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 md:gap-x-8 text-md md:text-xl text-center text-white font-medium">
-         <a href="#" class="px-4 flex flex-row items-center py-4 border-b-2 hover:border-amber-400">
-           <i class="pr-4 fa-brands fa-github"></i>
-           <span class="flex-1">GitHub</span>
-         </a>
-         <a href="#" class="px-4 flex flex-row items-center py-4 border-b-2 hover:border-amber-400">
-           <i class="pr-4 fa-solid fa-download"></i>
-           <span class="flex-1">Download</span>
-         </a>
-         <a href="#" class="px-4 flex flex-row items-center py-4 border-b-2 hover:border-amber-400">
-           <i class="pr-4 fa-solid fa-rocket"></i>
-           <span class="flex-1">Quick Start</span>
-         </a>
-         <a href="#" class="px-4 flex flex-row items-center py-4 border-b-2 hover:border-amber-400">
-           <i class="pr-4 fa-solid fa-book"></i>
-           <span class="flex-1">Documentation</span>
-         </a>
-         <a href="#" class="px-4 flex flex-row items-center py-4 border-b-2 hover:border-amber-400">
-           <i class="pr-4 fa-solid fa-newspaper"></i>
-           <span class="flex-1">Papers</span>
-         </a>
-       </div>
-     </nav>
-   </div>
 
 .. raw:: html
    <!-- Featured Simulations Section -->
