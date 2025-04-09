@@ -1,4 +1,67 @@
 /*******************************************
+ * Header Styling
+ *******************************************/
+/* Overall header container */
+.site-header {
+    background-color: #0f1e2d; /* Dark background */
+    color: #ffffff;
+    padding: 1rem 2rem;
+  }
+  
+  /* Top section: logo and tagline */
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  .brand-group {
+    display: flex;
+    align-items: center;
+  }
+  
+  .brand-logo {
+    height: 40px;
+    margin-right: 10px;
+  }
+  
+  .brand-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .tagline {
+    font-size: 1rem;
+    color: #cccccc;
+  }
+  
+  /* Navigation styling */
+  .header-nav {
+    border-top: 1px solid #ffffff;
+    padding-top: 0.5rem;
+  }
+  
+  .header-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .header-nav li a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+  }
+  
+  .header-nav li a:hover {
+    color: #ffd700;
+  }
+  
+/*******************************************
  * Docs Container
  ******************************************/
  .docs-container {
