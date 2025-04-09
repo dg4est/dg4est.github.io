@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getting Started</title>
+  <!-- Main site stylesheet -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-top">
+      <div class="brand-group">
+        <!-- Replace with your own logo path -->
+        <img src="assets/images/cowboys_uwyo.png" alt="UWYO Logo" class="brand-logo">
+        <span class="brand-text">Multi-Component Flow Code</span>
+      </div>
+      <p class="tagline">An exascale compressible multiphase and multiphysics flow code.</p>
+    </div>
+
+    <nav class="header-nav">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/docs/getting-started">Quick Start</a></li>
+        <li><a href="/docs">Documentation</a></li>
+        <li><a href="/papers">Papers</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main page content -->
+  <main>
+    <!-- The docs layout extends from 'default.html' to keep the same header/nav -->
+<div class="docs-container">
+  
+  <!-- Sidebar -->
+  <aside class="docs-sidebar">
+    <div class="docs-title">Documentation</div>
+    <nav>
+      <ul>
+        <li><a href="/docs/getting-started">Getting Started</a></li>
+        <li><a href="/docs/authors">Authors</a></li>
+        <li><a href="/docs/careers">Careers</a></li>
+        <li><a href="/docs/example-cases">Example Cases</a></li>
+        <li><a href="/docs/param-db">Parameter Database</a></li>
+        <li><a href="/docs/concepts">Concepts</a></li>
+        <li><a href="/docs/running">Running</a></li>
+        <li><a href="/docs/performance">Performance</a></li>
+        <li><a href="/docs/support">Support</a></li>
+        <li><a href="/docs/roadmap">Roadmap</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main docs content (inserted from each Markdown file in /docs) -->
+  <main class="docs-content">
+    <h1 id="dg4est">dg4est</h1>
+<p>dg4est is a software framework designed to support the development of
+hp-finite element methods for massively parallel scalable solvers using
+dynamically adaptive meshes. The code has hooks for WAKE3D, which is a
+multi-solver, multi-mesh overset framework.</p>
+
+<p>This code contains a discontinuous Galerken Compressible Navier-Stokes
+solver, CartDG, which is formulated based on nodal Lagrange basis functions
+using a weak formulation and a split form summation-by-parts formulation.
+Additionally, modal Legendre basis functions are available within the weak
+formulation.</p>
+
+<h2 id="nsf-crii-timeline-milestones">NSF CRII Timeline Milestones</h2>
+<p><img align="right" src="https://github.com/dg4est/dg4est/assets/37650539/f79eebb4-d442-4f4e-b428-6f640f0b47a9" /></p>
+
+<p><em>Year 1</em><br />
+<strong>Q1</strong>: May 1, 2024 - July 31, 2024<br />
+<strong>Q2</strong>: August 1, 2024 - October 31, 2024<br />
+<strong>Q3</strong>: November 1, 2024 - January 31, 2025<br />
+<strong>Q4</strong>: February 1, 2025 - April 30, 2025</p>
+
+<p><em>Year 2</em><br />
+<strong>Q5</strong>: May 1, 2025 - July 31, 2025<br />
+<strong>Q6</strong>: August 1, 2025 - October 31, 2025<br />
+<strong>Q7</strong>: November 1, 2025 - January 31, 2026<br />
+<strong>Q8</strong>: February 1, 2026 - April 30, 2026</p>
+
+<hr />
+<h1 id="1-obtaining-the-code">1. Obtaining the code</h1>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/dg4est/dg4est.git
+</code></pre></div></div>
+
+<hr />
+<h1 id="2-compilation">2. Compilation</h1>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>To compile dg4est and the 3rd party libraries (p4est, metis, googletest):
+./makescript.sh &lt;options&gt;
+</code></pre></div></div>
+
+<p><strong>Usage</strong>: ./makescript.sh <code class="language-plaintext highlighter-rouge">{OPTIONS}</code>…<code class="language-plaintext highlighter-rouge">{COMPILER OPTIONS}</code>…<code class="language-plaintext highlighter-rouge">{DG4EST OPTIONS}</code>…<code class="language-plaintext highlighter-rouge">{3PL OPTIONS}</code></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">OPTIONS:</th>
+      <th>Shortcut</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">–3pl</td>
+      <td>-3pl</td>
+      <td style="text-align: left">build the 3rd party libraries: metis, p4est, gtest</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–acoustics</td>
+      <td>-acoustics</td>
+      <td style="text-align: left">build the FW-H Acoustics library</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–dg4est</td>
+      <td>-dg4est</td>
+      <td style="text-align: left">build dg4est amr library</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td> </td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–help</td>
+      <td>-h</td>
+      <td style="text-align: left">displays this help message</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–clean</td>
+      <td>-c</td>
+      <td style="text-align: left">removes local build directories</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–distclean</td>
+      <td>-dc</td>
+      <td style="text-align: left">removes builds and install directories</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–release</td>
+      <td>-opt</td>
+      <td style="text-align: left">compile the project in optimized mode</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–debug</td>
+      <td>-deb</td>
+      <td style="text-align: left">compile the project in debug mode</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–testsON</td>
+      <td>-ton</td>
+      <td style="text-align: left">turn on unit tests (Google tests)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td> </td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>COMPILER OPTIONS</strong>:</td>
+      <td> </td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">CC=<code class="language-plaintext highlighter-rouge">&lt;arg&gt;</code></td>
+      <td>cc=<code class="language-plaintext highlighter-rouge">&lt;arg&gt;</code></td>
+      <td style="text-align: left">set the C compiler</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">CXX=<code class="language-plaintext highlighter-rouge">&lt;arg&gt;</code></td>
+      <td>cxx=<code class="language-plaintext highlighter-rouge">&lt;arg&gt;</code></td>
+      <td style="text-align: left">set the C++ compiler</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">FC=<code class="language-plaintext highlighter-rouge">&lt;arg&gt;</code></td>
+      <td>fc=<code class="language-plaintext highlighter-rouge">&lt;arg&gt;</code></td>
+      <td style="text-align: left">set the Fortran compiler</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td> </td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>3PL OPTIONS</strong>:</td>
+      <td> </td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–ALL3P</td>
+      <td>-all3p</td>
+      <td style="text-align: left">compile all 3rd party libraries</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–P4EST</td>
+      <td>-p4est</td>
+      <td style="text-align: left">compile p4est</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–METIS</td>
+      <td>-metis</td>
+      <td style="text-align: left">compile metis</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–GTEST</td>
+      <td>-gtest</td>
+      <td style="text-align: left">compile google test</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="common-build-options">Common Build Options:</h1>
+<p><strong>NWSC (-nwsc)</strong>: Sets CC=mpicc CXX=mpicxx FC=mpif90
+    ./makescript.sh -nwsc</p>
+
+<p><strong>Intel MPI (-impi)</strong>: Sets CC=mpiicc CXX=mpiicpc FC=mpiifort
+    ./makescript.sh -impi</p>
+
+<hr />
+<h1 id="3-dependencies">3. Dependencies</h1>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Software:
+    CMake (Version 3.1 or newer): We also recommend ccmake or cmake-gui.
+    MPI: optional MPI-3 one-sided functions available
+    libtool: apt install libtool
+    automake: apt install automake
+    zlib: apt install zlib1g zlibc
+
+Documentation:
+    doxygen: apt install doxygen
+    graphviz: apt install graphviz
+    latex: apt install texlive-full texmaker
+</code></pre></div></div>
+
+<hr />
+<h1 id="4-license">4. License</h1>
+
+<p>The MIT License (MIT)</p>
+
+<p>Copyright (c) 2023 Andrew C. Kirby, Dimitri J. Mavriplis</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+
+  </main>
+
+</div>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <p>&copy; 2025 Andrew Kirby All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
