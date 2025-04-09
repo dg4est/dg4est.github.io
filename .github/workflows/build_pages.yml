@@ -15,22 +15,18 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'  # Adjust this if needed
+          ruby-version: '3.1'
 
       - name: Install Jekyll
-        run: |
-          gem install jekyll
+        run: gem install jekyll
 
-      - name: Build the site with Jekyll
-        run: |
-          jekyll build
-          touch _site/.nojekyll
-          ls -altr _site
+      - name: Build
+        run: jekyll build  # Generates site into _site/ by default
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           BRANCH: gh-pages
-          FOLDER: _site        # Jekyll's default output folder
-          CLEAN: false
-          TARGET-FOLDER: docs
+          FOLDER: _site
+          CLEAN: true
+# SIMPLILIFIED WORKFLOW FOR JEKYLL

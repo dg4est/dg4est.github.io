@@ -1,8 +1,7 @@
 ---
 layout: default
-title: Home Page
+title: "Home Page"
 ---
-
 <!-- You can now add your content (or raw HTML) directly below -->
 
 # Welcome to DG4EST Documentation!
