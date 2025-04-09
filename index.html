@@ -1,15 +1,43 @@
----
-layout: default
-title: Home Page
----
-.. DG4EST documentation master file, created by
-   sphinx-quickstart on Sun Apr 14 15:08:20 2024.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+<!-- _layouts/default.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Home Page</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
 
-.. raw:: html
-   <!-- Featured Simulations Section -->
-   <main class="px-4 md:px-0 bg-white flex-1 py-6 md:py-12">
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-top">
+      <div class="brand-group">
+        <!-- Example Logo -->
+        <img src="/assets/images/cowboys_uwyo.png" alt="UWYO Logo" class="brand-logo" />
+        <span class="brand-text">Multi-Component Flow Code</span>
+      </div>
+      <p class="tagline">An exascale compressible multiphase and multiphysics flow code.</p>
+    </div>
+
+    <nav class="header-nav">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/docs/getting-started">Quick Start</a></li>
+        <li><a href="/docs">Documentation</a></li>
+        <li><a href="/papers">Papers</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- You can now add your content (or raw HTML) directly below -->
+
+<h1 id="welcome-to-dg4est-documentation">Welcome to DG4EST Documentation!</h1>
+
+<p>.. raw:: html
+   <!-- Featured Simulations Section --></p>
+<main class="px-4 md:px-0 bg-white flex-1 py-6 md:py-12">
      <div class="container mx-auto flex flex-col gap-8 md:gap-12">
        <section id="simulations" class="flex flex-col gap-4">
          <h2 class="text-xl md:text-2xl font-extrabold">Featured Simulations??</h2>
@@ -49,10 +77,10 @@ title: Home Page
      </div>
    </main>
 
-.. raw:: html
+<p>.. raw:: html</p>
 
-   <!-- Weak Scaling Results Section -->
-   <section id="scaling" class="flex flex-col gap-4">
+<p><!-- Weak Scaling Results Section --></p>
+<section id="scaling" class="flex flex-col gap-4">
      <h2 class="text-xl md:text-2xl font-extrabold">Weak Scaling Results EXAMPLE</h2>
      <div id="ft-scaling" class="flex flex-col md:flex-row gap-8 md:justify-around">
        <div class="flex flex-col text-white rounded bg-slate-900 rounded-b-lg md:w-1/3">
@@ -70,10 +98,10 @@ title: Home Page
      </div>
    </section>
 
-.. raw:: html
+<p>.. raw:: html</p>
 
-   <!-- Contributors Section -->
-   <section id="contributors" class="flex flex-col gap-4">
+<p><!-- Contributors Section --></p>
+<section id="contributors" class="flex flex-col gap-4">
      <h2 class="text-xl md:text-2xl font-extrabold">Contributors</h2>
      <div id="ft-contrib" class="flex flex-wrap">
        <a href="#" class="m-1"><img src="https://via.placeholder.com/48" alt="Contributor 1" class="w-12 h-12 object-cover" /></a>
@@ -83,10 +111,10 @@ title: Home Page
      </div>
    </section>
 
-.. raw:: html
+<p>.. raw:: html</p>
 
-   <!-- Footer -->
-   <footer class="flex flex-col w-full px-4 md:px-0 text-white py-8 gap-4 container mx-auto">
+<p><!-- Footer --></p>
+<footer class="flex flex-col w-full px-4 md:px-0 text-white py-8 gap-4 container mx-auto">
      <div class="font-bold text-center text-sm md:text-md md:text-left">
        &copy; <span id="year">2025</span> Your Name or Organization
      </div>
@@ -94,3 +122,11 @@ title: Home Page
        Supported by multiple organizations and funding agencies.
      </div>
    </footer>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Andrew Kirby. All rights reserved.</p>
+  </footer>
+</body>
+</html>
