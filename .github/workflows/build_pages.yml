@@ -15,16 +15,15 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'  # Change as needed
+          ruby-version: '3.1'  # Adjust this if needed
 
-      - name: Install Jekyll and dependencies
+      - name: Install Jekyll
         run: |
-          gem install bundler
-          bundle install
+          gem install jekyll
 
       - name: Build the site with Jekyll
         run: |
-          bundle exec jekyll build
+          jekyll build
           touch _site/.nojekyll
           ls -altr _site
 
@@ -32,6 +31,6 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           BRANCH: gh-pages
-          FOLDER: _site        # Use Jekyll's output folder
-          CLEAN: false         # Automatically remove deleted files? Set to true if desired.
-          TARGET-FOLDER: docs   # If you want to deploy to a subdirectory
+          FOLDER: _site        # Jekyll's default output folder
+          CLEAN: false
+          TARGET-FOLDER: docs
