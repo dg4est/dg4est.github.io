@@ -2,10 +2,11 @@
 layout: default
 title: Home Page
 ---
-.. DG4EST documentation master file, created by
-   sphinx-quickstart on Sun Apr 14 15:08:20 2024.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+
+<!-- You can now add your content (or raw HTML) directly below -->
+
+# Welcome to DG4EST Documentation!
+
 
 .. raw:: html
    <!-- Featured Simulations Section -->

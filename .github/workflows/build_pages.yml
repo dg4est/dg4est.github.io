@@ -3,37 +3,35 @@ name: build
 on:
   push:
     branches:
-    - main
-        
+      - main
+
 jobs:
   buildpages:
-    runs-on:  ubuntu-latest
-    
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.2.0
-      
-      - name: install
+        uses: actions/checkout@v2
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'  # Change as needed
+
+      - name: Install Jekyll and dependencies
         run: |
-          python3 -m pip install -U pip
-          python3 -m pip install -r requirements.txt
-          
-      - name: add_path
+          gem install bundler
+          bundle install
+
+      - name: Build the site with Jekyll
         run: |
-          echo "/home/runner/.local/bin" >> $GITHUB_PATH
-          
-      - name: build
-        run: |
-          make html
-          touch _build/html/.nojekyll
-          ls -altr _build/html
-          
-      - name: deploy
+          bundle exec jekyll build
+          touch _site/.nojekyll
+          ls -altr _site
+
+      - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           BRANCH: gh-pages
-          FOLDER: _build/html # The folder the action should deploy.
-          CLEAN: false # Automatically remove deleted files from the deploy branch
-          TARGET-FOLDER: docs
-     
-        
+          FOLDER: _site        # Use Jekyll's output folder
+          CLEAN: false         # Automatically remove deleted files? Set to true if desired.
+          TARGET-FOLDER: docs   # If you want to deploy to a subdirectory
