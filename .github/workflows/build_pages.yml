@@ -20,8 +20,13 @@ jobs:
       - name: Install Jekyll
         run: gem install jekyll
 
-      - name: Build
-        run: jekyll build  # Generates site into _site/ by default
+      - name: Build the site with Jekyll
+ 
+
+        run: |
+          jekyll build
+          touch _site/.nojekyll
+          ls -altr _site
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
