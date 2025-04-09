@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Configuration file for the Sphinx documentation builder.
-#
+# Edit
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/master/config
@@ -24,7 +24,7 @@ from sphinx.writers.html import HTMLTranslator
 
 project = 'DG4EST'
 copyright = '%s, Andrew C. Kirby' % dt.datetime.now().year
-author = 'Andrew C. Kirby'
+author = 'Andrew C. Kirby & Tyson J. Limato'
 
 # The short X.Y version
 version = '1.0'
@@ -94,7 +94,9 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
+html_css_files = [
+    'style.css',  # This path is relative to _static/
+]
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
 #

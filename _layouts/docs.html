@@ -1,0 +1,32 @@
+---
+layout: default
+---
+
+<!-- The docs layout extends from 'default.html' to keep the same header/nav -->
+<div class="docs-container">
+  
+  <!-- Sidebar -->
+  <aside class="docs-sidebar">
+    <div class="docs-title">Documentation</div>
+    <nav>
+      <ul>
+        <li><a href="/docs/getting-started">Getting Started</a></li>
+        <li><a href="/docs/authors">Authors</a></li>
+        <li><a href="/docs/careers">Careers</a></li>
+        <li><a href="/docs/example-cases">Example Cases</a></li>
+        <li><a href="/docs/param-db">Parameter Database</a></li>
+        <li><a href="/docs/concepts">Concepts</a></li>
+        <li><a href="/docs/running">Running</a></li>
+        <li><a href="/docs/performance">Performance</a></li>
+        <li><a href="/docs/support">Support</a></li>
+        <li><a href="/docs/roadmap">Roadmap</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main docs content (inserted from each Markdown file in /docs) -->
+  <main class="docs-content">
+    {{ content }}
+  </main>
+
+</div>

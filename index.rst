@@ -3,12 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to DG4EST's documentation!
-==================================
+.. Welcome to DG4EST's documentation!
+.. ==================================
 
-.. raw:: html
+.. .. raw:: html
 
-   <!-- Header Section -->
+..   <!-- Header Section -->
    <header class="w-full text-white drop-shadow-xl font-bold text-xl md:text-2xl">
      <div class="px-4 md:px-0 container mx-auto py-6 flex flex-row items-center justify-center md:justify-start gap-x-4">
        <img src="_static/logo.png" alt="Project Logo" class="hidden md:inline h-6" />
@@ -16,9 +16,9 @@ Welcome to DG4EST's documentation!
      </div>
    </header>
 
-.. raw:: html
+.. .. raw:: html
 
-   <!-- Hero Section & Navigation -->
+..   <!-- Hero Section & Navigation -->
    <div class="px-4 md:px-0 container mx-auto flex flex-col gap-8 py-8 md:py-12">
      <div class="flex flex-col md:flex-row items-center gap-10 md:gap-16 py-8 md:py-16">
        <div class="w-full flex flex-col items-center md:items-start">
@@ -55,7 +55,6 @@ Welcome to DG4EST's documentation!
    </div>
 
 .. raw:: html
-
    <!-- Featured Simulations Section -->
    <main class="px-4 md:px-0 bg-white flex-1 py-6 md:py-12">
      <div class="container mx-auto flex flex-col gap-8 md:gap-12">
