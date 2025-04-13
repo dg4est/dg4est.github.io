@@ -24,11 +24,11 @@ jobs:
           bundle install
 
       - name: Build Jekyll site
-        run: bundle exec jekyll build --destination ./_site
+        run: bundle exec jekyll build
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: main
-          folder: _site
+          branch: gh-pages       # The branch the site should be deployed to
+          folder: _site          # The folder the action should deploy
           clean: true
