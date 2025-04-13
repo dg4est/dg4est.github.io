@@ -1,96 +1,101 @@
 ---
 layout: default
 title: "Home Page"
+description: "Scientific landing page for documentation and interactive tools"
 ---
-<!-- You can now add your content (or raw HTML) directly below -->
 
-# Welcome to DG4EST Documentation!
+<!-- Masthead -->
+<header class="masthead" style="background-color: #2c2c2c; color: #f1f5f9;">
+  <div class="container px-4 px-lg-5 h-100">
+    <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
+      <div class="col-lg-8 align-self-end">
+        <h1 class="fw-bold" style="color: #f8fafc;">Built for precision. Engineered for parallelism.</h1>
+        <hr class="divider" />
+      </div>
+      <div class="col-lg-8 align-self-baseline">
+        <p class="text-light mb-5">dg4est is a software framework designed to support the development of hp-finite element methods for massively parallel scalable solvers using dynamically adaptive meshes. The code has hooks for WAKE3D, a multi-solver, multi-mesh overset framework.</p>
+        <a class="btn btn-warning btn-xl" href="#about">Learn More</a>
+      </div>
+    </div>
+  </div>
+</header>
 
+<!-- About -->
+<section class="page-section" id="about" style="background-color: #272727;">
+  <div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center text-center">
+      <div class="col-lg-8">
+        <h2 class="text-white mt-0">Why Dg4est?</h2>
+        <hr class="divider divider-light" />
+        <p class="text-light mb-4">Designed to scale. Built with adaptability in mind. Dg4est powers high-fidelity numerical simulations with advanced hp-adaptive finite element methods.</p>
+        <a class="btn btn-outline-light btn-xl" href="#services">Explore Sections</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-.. raw:: html
-   <!-- Featured Simulations Section -->
-   <main class="px-4 md:px-0 bg-white flex-1 py-6 md:py-12">
-     <div class="container mx-auto flex flex-col gap-8 md:gap-12">
-       <section id="simulations" class="flex flex-col gap-4">
-         <h2 class="text-xl md:text-2xl font-extrabold">Featured Simulations??</h2>
-         <div id="ft-sim" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-           <!-- Example Simulation Card -->
-           <div class="flex flex-col text-white rounded bg-slate-900 rounded-b-lg">
-             <div class="flex-1 grid bg-white pb-2">
-               <img src="https://via.placeholder.com/400x225.png?text=Sim+1" alt="Simulation Alpha Visualization" class="place-self-center" />
-             </div>
-             <div class="flex flex-row items-center px-2 py-1">
-               <div class="flex flex-col h-full bg-white justify-center">
-                 <img src="_static/logo.png" alt="Logo" class="h-10" />
-               </div>
-               <div class="flex-1 p-2 font-semibold text-center">Simulation Alpha</div>
-               <a href="#" class="w-10 text-center">
-                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
-               </a>
-             </div>
-             <div class="grid grid-cols-3 gap-4 px-4 py-2">
-               <div class="flex flex-row items-center">
-                 <div class="pr-2"><i class="fa-solid fa-server"></i></div>
-                 <div class="flex-1 text-center">System A</div>
-               </div>
-               <div class="flex flex-row items-center">
-                 <div class="pr-2"><i class="fa-solid fa-microchip"></i></div>
-                 <div class="flex-1 text-center">128 GPUs</div>
-               </div>
-               <div class="flex flex-row items-center">
-                 <div class="pr-2"><i class="fa-solid fa-clock"></i></div>
-                 <div class="flex-1 text-center">12h</div>
-               </div>
-             </div>
-           </div>
-           <!-- Additional simulation cards can follow the same structure -->
-         </div>
-       </section>
-     </div>
-   </main>
+<!-- Core Sections -->
+<section class="page-section" id="services" style="background-color: #2c2c2c;">
+  <div class="container px-4 px-lg-5">
+    <h2 class="text-center text-white mt-0">Core Sections</h2>
+    <hr class="divider divider-light" />
+    <div class="row gx-4 gx-lg-5">
+      <div class="col-lg-3 col-md-6 text-center">
+        <div class="mt-5">
+          <div class="mb-2"><i class="bi-person-lines-fill fs-1 text-warning"></i></div>
+          <h3 class="h4 mb-2 text-white">Authors</h3>
+          <p class="text-light mb-0">Meet the contributors behind the research and tools.</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 text-center">
+        <div class="mt-5">
+          <div class="mb-2"><i class="bi-play-circle fs-1 text-warning"></i></div>
+          <h3 class="h4 mb-2 text-white">Getting Started</h3>
+          <p class="text-light mb-0">New to Dg4est? This is your starting point for setup and usage.</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 text-center">
+        <div class="mt-5">
+          <div class="mb-2"><i class="bi-journal-code fs-1 text-warning"></i></div>
+          <h3 class="h4 mb-2 text-white">Documentation</h3>
+          <p class="text-light mb-0">Read the technical documentation and implementation details.</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 text-center">
+        <div class="mt-5">
+          <div class="mb-2"><i class="bi-journals fs-1 text-warning"></i></div>
+          <h3 class="h4 mb-2 text-white">Publications</h3>
+          <p class="text-light mb-0">Browse academic papers, posters, and reference materials.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-.. raw:: html
+<!-- Portfolio -->
+<section id="portfolio" style="background-color: #272727;">
+  <div class="container-fluid p-0">
+    <div class="row g-0">
+      {% for i in (1..6) %}
+      <div class="col-lg-4 col-sm-6">
+        <a class="portfolio-box" href="{{ '/assets/img/portfolio/fullsize/' | append: i | append: '.jpg' | relative_url }}" title="Project Name">
+          <img class="img-fluid" src="{{ '/assets/img/portfolio/thumbnails/' | append: i | append: '.jpg' | relative_url }}" alt="Project {{ i }}" />
+          <div class="portfolio-box-caption{% if i == 6 %} p-3{% endif %}">
+            <div class="project-category text-white-50">Category</div>
+            <div class="project-name text-white">Project Name</div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
-   <!-- Weak Scaling Results Section -->
-   <section id="scaling" class="flex flex-col gap-4">
-     <h2 class="text-xl md:text-2xl font-extrabold">Weak Scaling Results EXAMPLE</h2>
-     <div id="ft-scaling" class="flex flex-col md:flex-row gap-8 md:justify-around">
-       <div class="flex flex-col text-white rounded bg-slate-900 rounded-b-lg md:w-1/3">
-         <div class="flex-1 grid bg-white pb-2">
-           <img src="https://via.placeholder.com/400x300.png?text=Chart+1" alt="Scaling Chart - Frontier" class="place-self-center" />
-         </div>
-         <div class="p-2 font-semibold text-center">Frontier (AMD GPUs)</div>
-       </div>
-       <div class="flex flex-col text-white rounded bg-slate-900 rounded-b-lg md:w-1/3">
-         <div class="flex-1 grid bg-white pb-2">
-           <img src="https://via.placeholder.com/400x300.png?text=Chart+2" alt="Scaling Chart - Summit" class="place-self-center" />
-         </div>
-         <div class="p-2 font-semibold text-center">Summit (NVIDIA GPUs)</div>
-       </div>
-     </div>
-   </section>
-
-.. raw:: html
-
-   <!-- Contributors Section -->
-   <section id="contributors" class="flex flex-col gap-4">
-     <h2 class="text-xl md:text-2xl font-extrabold">Contributors</h2>
-     <div id="ft-contrib" class="flex flex-wrap">
-       <a href="#" class="m-1"><img src="https://via.placeholder.com/48" alt="Contributor 1" class="w-12 h-12 object-cover" /></a>
-       <a href="#" class="m-1"><img src="https://via.placeholder.com/48" alt="Contributor 2" class="w-12 h-12 object-cover" /></a>
-       <a href="#" class="m-1"><img src="https://via.placeholder.com/48" alt="Contributor 3" class="w-12 h-12 object-cover" /></a>
-       <a href="#" class="m-1"><img src="https://via.placeholder.com/48" alt="Contributor 4" class="w-12 h-12 object-cover" /></a>
-     </div>
-   </section>
-
-.. raw:: html
-
-   <!-- Footer -->
-   <footer class="flex flex-col w-full px-4 md:px-0 text-white py-8 gap-4 container mx-auto">
-     <div class="font-bold text-center text-sm md:text-md md:text-left">
-       &copy; <span id="year">2025</span> Your Name or Organization
-     </div>
-     <div class="text-justify flex-1 text-xs md:text-sm text-neutral-300">
-       Supported by multiple organizations and funding agencies.
-     </div>
-   </footer>
+<!-- Call to Action -->
+<section class="page-section bg-dark text-white">
+  <div class="container px-4 px-lg-5 text-center">
+    <h2 class="mb-4">Free Download on GitHub</h2>
+    <a class="btn btn-outline-warning btn-xl" href="https://github.com/dg4est/dg4est">Download Now</a>
+  </div>
+</section>
+ 

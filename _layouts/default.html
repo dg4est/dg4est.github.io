@@ -1,41 +1,12 @@
-<!-- _layouts/default.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>{{ page.title }}</title>
-  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
-</head>
-<body>
-
-  <!-- Site Header -->
-  <header class="site-header">
-    <div class="header-top">
-      <div class="brand-group">
-        <!-- Example Logo -->
-        <img src="{{ '/assets/images/cowboys_uwyo.png' | relative_url }}" alt="UWYO Logo" class="brand-logo" />
-        <span class="brand-text">Multi-Component Flow Code</span>
-      </div>
-      <p class="tagline">An exascale compressible multiphase and multiphysics flow code.</p>
-    </div>
-
-    <nav class="header-nav">
-      <ul>
-        <li><a href="{{ '/' | relative_url }}">Home</a></li>
-        <li><a href="{{ '/docs/getting-started' | relative_url }}">Quick Start</a></li>
-        <li><a href="{{ '/docs' | relative_url }}">Documentation</a></li>
-        <li><a href="{{ '/papers' | relative_url }}">Papers</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main>
+  <head>
+    {% include head.html %}
+  </head>
+  <body id="page-top">
+    {% include nav.html %}
     {{ content }}
-  </main>
-
-  <footer class="site-footer">
-    <p>&copy; 2025 Andrew Kirby. All rights reserved.</p>
-  </footer>
-</body>
+    {% include footer.html %}
+    {% include scripts.html %}
+  </body>
 </html>
