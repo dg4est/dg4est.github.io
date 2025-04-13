@@ -13,22 +13,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Ruby
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
 
-      - name: Install Jekyll
-        run: gem install jekyll
-
-      - name: Build the site with Jekyll
+      - name: Install dependencies
         run: |
-          jekyll build
-          touch _site/.nojekyll
+          gem install bundler
+          bundle install
+
+      - name: Build Jekyll site
+        run: bundle exec jekyll build
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages
-          folder: _site
+          branch: gh-pages       # The branch the site should be deployed to
+          folder: _site          # The folder the action should deploy
           clean: true
