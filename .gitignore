@@ -1,0 +1,24 @@
+# Ignore the built site directory
+_site/
+
+# Ignore cache and temporary files
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+.cache/
+
+# Ignore dependencies
+vendor/
+
+# Ignore logs and temp files
+*.log
+*.tmp
+
+# Node-related (if applicable)
+node_modules/
+
+# Mac system files
+.DS_Store
+
+# VSCode settings (if you're using it)
+.vscode/

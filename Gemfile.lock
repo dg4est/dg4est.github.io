@@ -276,6 +276,9 @@ PLATFORMS
 DEPENDENCIES
   github-pages
   jekyll (~> 3.10)
+  jekyll-feed
+  jekyll-seo-tag
+  webrick
 
 BUNDLED WITH
    2.3.26
