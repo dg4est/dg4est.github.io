@@ -1,24 +1,20 @@
-# Ignore the built site directory
+# Ignore Jekyll build output
 _site/
 
-# Ignore cache and temporary files
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-.cache/
-
-# Ignore dependencies
+# Ignore Ruby-related files
+.bundle/
 vendor/
+Gemfile.lock
 
-# Ignore logs and temp files
+# OS-specific and IDE files
+.DS_Store
 *.log
-*.tmp
+*.swp
+*.swo
 
-# Node-related (if applicable)
+# Node modules (if you ever use npm)
 node_modules/
 
-# Mac system files
-.DS_Store
-
-# VSCode settings (if you're using it)
-.vscode/
+# Cache or temporary files
+*.tmp
+.cache/

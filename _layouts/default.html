@@ -3,10 +3,13 @@
   <head>
     {% include head.html %}
   </head>
+
   <body id="page-top">
     {% include nav.html %}
     {{ content }}
     {% include footer.html %}
     {% include scripts.html %}
+    <!--Import the 3js module globally-->
+    <script type="module" src="{{ '/assets/js/init-three-global.js' | relative_url }}"></script>
   </body>
 </html>
