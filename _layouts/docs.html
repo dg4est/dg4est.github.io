@@ -2,6 +2,16 @@
 <html lang="en">
   <head>
     {% include head.html %}
+    <script type="importmap">
+      {
+        "imports": {
+          "three":       "{{ '/assets/js/threejs/three.module.js'     | relative_url }}",
+          "three/":      "{{ '/assets/js/threejs/'                  | relative_url }}",
+          "three/examples/jsm/controls/": "{{ '/assets/js/threejs/controls/' | relative_url }}",
+          "three/examples/jsm/loaders/":  "{{ '/assets/js/threejs/loaders/'  | relative_url }}"
+        }
+      }
+    </script>
     <style>
       html, body {
         height: 100%;
