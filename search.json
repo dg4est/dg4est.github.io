@@ -40,7 +40,7 @@
     {
       "title": "flow-visualization",
       "url": "/docs/flow-visualization/",
-      "content": "Embedded STL Viewer ExampleBelow is an embedded STL model rendered using Three.js. You can rotate, zoom, and pan using your mouse.TESTING STL VIDEO with STL FramesBelow is an embedded model rendered using Three.js that loops through a series of 3D frames. You can rotate, zoom, and pan using your mouse.Dataset: 3D STL Human Airways on Figshare  Loading simulation frames...  Failed to load simulation frames. Please try again later.  ▶ Play  ⏸ Pause"
+      "content": "Embedded STL ViewerBelow is a single STL model you can rotate, zoom and pan.Fluid Simulation (59 STL Frames)Below is a looping series of STL frames.Dataset: 3D STL Human Airways on Figshare"
     },
   
     {
