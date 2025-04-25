@@ -57,7 +57,7 @@ for (const [name, url] of Object.entries(MODULES)) {
   try {
     // dynamic import accepts fully-qualified URLs
     const mod = await import(/* @vite-ignore */ url);
-    window.ThreeModules[name] = mod[name];
+    window.ThreeModules[name] = mod[name] || mod.default;
     console.log(`init-three-global: loaded ${name}`);
   } catch (err) {
     console.warn(`init-three-global: failed to load ${name} —`, err);
