@@ -1,6 +1,11 @@
-import { MOUSE, TOUCH } from 'three';
+import {
+	MOUSE,
+	TOUCH
+} from 'three';
 
-import { OrbitControls } from './OrbitControls.js';
+import {
+	OrbitControls
+} from './OrbitControls.js';
 
 /**
  * This class is intended for transforming a camera over a map from bird's eye perspective.
