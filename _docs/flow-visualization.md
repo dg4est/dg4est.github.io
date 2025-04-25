@@ -5,37 +5,37 @@ permalink: /docs/flow-visualization/
 ---
 
 ## Embedded STL Viewer  
-<div id="stl-demo"></div>
+<div id="stl-demo" style="height:500px;"></div>
 
 ---
 
 ## Fluid Simulation (59 STL Frames)  
-<div id="fluid-demo"></div>
+<div id="fluid-demo" style="height:500px;"></div>
 
-{% raw %}
-<!-- 1) Three.js & all controls & loaders -->
+<!-- 1️⃣  Three + controls/loaders -->
 <script type="module" src="{{ '/assets/js/init-three-global.js' | relative_url }}"></script>
 
-<!-- 2) Viewer modules -->
+<!-- 2️⃣  Viewer modules (ES-modules that attach to window) -->
 <script type="module" src="{{ '/assets/js/stl-viewer.js'      | relative_url }}"></script>
 <script type="module" src="{{ '/assets/js/fluidsimviewer.js'  | relative_url }}"></script>
 
-<!-- 3) FlowVisualization wrapper (IIFE) -->
+<!-- 3️⃣  FlowVisualization wrapper (plain script, not a module) -->
 <script src="{{ '/assets/js/flow-visualization.js' | relative_url }}"></script>
 
-<!-- 4) Page-specific bootstrap -->
+<!-- 4️⃣  Page-specific bootstrap -->
 <script>
+  /* Single STL model */
   FlowVisualization.staticViewer(
     'stl-demo',
-    '{{ "/assets/models/example.stl" | relative_url }}',
+    {{ '/assets/models/example.stl' | relative_url | jsonify }},
     { color: 0xfacc15, cameraZ: 150 }
   );
 
+  /* 59-frame fluid simulation (prefix only; wrapper appends 1…59 + '.stl') */
   FlowVisualization.fluidViewer(
     'fluid-demo',
-    '{{ "/assets/models/airways/outlet" | relative_url }}',
+    {{ '/assets/models/airways/outlet' | relative_url | jsonify }},
     59,
     { color: 0x1caaff, cameraZ: 120, frameDelay: 200 }
   );
 </script>
-{% endraw %}
