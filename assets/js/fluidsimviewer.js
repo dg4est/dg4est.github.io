@@ -1,113 +1,94 @@
-// File: assets/js/fluidsimviewer.js
-
+// assets/js/fluidsimviewer.js
 export function FluidSimViewer(containerId, modelPaths, options = {}) {
   const container = document.getElementById(containerId);
   if (!container) {
-    console.error(`Container with ID '${containerId}' not found.`);
+    console.error(`Container '${containerId}' not found`);
     return;
   }
 
-  // Use global THREE
+  /* ---------- THREE.js scene boilerplate ---------- */
   const THREE = window.THREE;
-
-  let currentIndex = 0;
-  const meshes = [];
-  const totalFrames = modelPaths.length;
-  const frameDelay = options.frameDelay || 150;
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
+  const scene    = new THREE.Scene();
+  const camera   = new THREE.PerspectiveCamera(
     75,
     container.clientWidth / container.clientHeight,
     0.1,
     1000
   );
-  camera.position.z = options.cameraZ || 100;
+  camera.position.z = options.cameraZ || 120;
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
-  renderer.shadowMap.enabled = true;
   container.appendChild(renderer.domElement);
 
   const controls = new window.ThreeModules.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
 
-  const ambientLight = new THREE.AmbientLight(0x888888);
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(100, 100, 100);
-  directionalLight.castShadow = true;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.6));
 
-  scene.add(ambientLight);
-  scene.add(directionalLight);
+  /* ---------- load STL frames ---------- */
+  const loader  = new window.ThreeModules.STLLoader();
+  const materialTemplate = new THREE.MeshStandardMaterial({ color: options.color || 0x1caaff });
 
-  const loader = new window.ThreeModules.STLLoader();
-  const material = new THREE.MeshStandardMaterial({ color: options.color || 0x1caaff });
+  const meshes = new Array(modelPaths.length);
+  let loaded   = 0;
 
-  modelPaths.forEach((path, index) => {
-    loader.load(path, geometry => {
-      geometry.computeBoundingBox();
-      const mesh = new THREE.Mesh(geometry, material.clone());
-      mesh.visible = false;
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      geometry.boundingBox.getCenter(mesh.position).negate();
-      scene.add(mesh);
-      meshes[index] = mesh;
+  modelPaths.forEach((file, idx) => {
+    loader.load(
+      file,
+      geo => {
+        const mesh = new THREE.Mesh(geo, materialTemplate.clone());
+        geo.computeBoundingBox();
+        geo.boundingBox.getCenter(mesh.position).negate();
+        mesh.visible = false;
+        scene.add(mesh);
+        meshes[idx] = mesh;
 
-      if (meshes.filter(Boolean).length === totalFrames && index === totalFrames - 1) {
-        document.getElementById("fluid-loading-message")?.remove();
-        meshes[0].visible = true;
-        animate();
-        play();
-      }
-    });
-  });
-  // Begin render as soon as the last outstanding load completes
-  let loadedCount = 0;
-  loader.load(path, geometry => {
-    /* … create mesh … */
-    meshes[index] = mesh;
-    loadedCount++;
-
-    if (loadedCount === totalFrames) {        // ← start here
-      document.getElementById("fluid-loading-message")?.remove();
-      meshes[0].visible = true;
-      animate();
-      play();
-    }
+        if (++loaded === modelPaths.length) {
+          meshes[0].visible = true;
+          animate();
+          play();
+        }
+      },
+      undefined,
+      err => console.error(`[FluidSimViewer] failed to load ${file}`, err)
+    );
   });
 
-  function showFrame(index) {
-    meshes.forEach((m, i) => (m.visible = i === index));
-  }
+  /* ---------- animation controls ---------- */
+  let animationInterval = null;   //  ← declare before play/pause use it
 
-  let animationInterval = null;
+  function showFrame(i) { meshes.forEach((m, k) => (m.visible = k === i)); }
 
   function play() {
+    if (animationInterval) return;               // already playing
+    let index = 0;
     animationInterval = setInterval(() => {
-      currentIndex = (currentIndex + 1) % totalFrames;
-      showFrame(currentIndex);
-    }, frameDelay);
+      index = (index + 1) % meshes.length;
+      showFrame(index);
+    }, options.frameDelay || 150);
   }
 
   function pause() {
     clearInterval(animationInterval);
+    animationInterval = null;
   }
 
-  window.addEventListener("resize", () => {
-    camera.aspect = container.clientWidth / container.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
-  });
+  window.playFluid  = play;
+  window.pauseFluid = pause;
 
+  /* ---------- render loop ---------- */
   function animate() {
     requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
   }
 
-  // Optional: Expose play/pause globally
-  window.pauseFluid = pause;
-  window.playFluid = play;
+  /* ---------- resize handling ---------- */
+  window.addEventListener('resize', () => {
+    const { clientWidth: w, clientHeight: h } = container;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
 }
-window.FluidSimViewer = FluidSimViewer; // export to a final window

@@ -211,20 +211,22 @@
 
 <!-- 4️⃣  Page-specific bootstrap -->
 <script>
-  /* Single STL model */
-  FlowVisualization.staticViewer(
-    'stl-demo',
-    "/assets/models/example.stl",
-    { color: 0xfacc15, cameraZ: 150 }
-  );
+  window.addEventListener('DOMContentLoaded', () => {
+    /* Single STL */
+    FlowVisualization.staticViewer(
+      'stl-demo',
+      "/assets/models/example.stl",
+      { color: 0xfacc15, cameraZ: 150 }
+    );
 
-  /* 59-frame fluid simulation (prefix only; wrapper appends 1…59 + '.stl') */
-  FlowVisualization.fluidViewer(
-    'fluid-demo',
-    "/assets/models/airways/outlet",
-    59,
-    { color: 0x1caaff, cameraZ: 120, frameDelay: 200 }
-  );
+    /* Fluid sim */
+    FlowVisualization.fluidViewer(
+      'fluid-demo',
+      "/assets/models/airways/outlet",
+      59,
+      { color: 0x1caaff, cameraZ: 120, frameDelay: 200 }
+    );
+  });
 </script>
 
 
