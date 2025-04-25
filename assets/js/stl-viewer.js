@@ -8,7 +8,7 @@ export function STLViewer(containerId, modelPath, options = {}) {
     const width = container.clientWidth;
     const height = container.clientHeight;
   
-    // Access global THREE
+    // Access global THREE Defined in Layouts
     const THREE = window.THREE;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
