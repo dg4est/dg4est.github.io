@@ -23,7 +23,13 @@
 <!-- Core Theme CSS (compiled Bootstrap + custom) -->
 <link href="/assets/css/styles.css" rel="stylesheet" />
 
-    </script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "/assets/js/threejs/three.module.js"
+        }
+      }
+    </script> 
     <style>
       html, body {
         height: 100%;
@@ -193,27 +199,27 @@
 <div id="fluid-demo"></div>
 
 <!-- 1) Three.js & all controls & loaders -->
-<script type="module" src="/assets/js/init-three-global.js"></script>
+<script type="module" src="{{ '/assets/js/init-three-global.js' | relative_url }}"></script>
 
-<!-- 2) Your two ES-module viewers which attach themselves to window renderer -->
-<script type="module" src="/assets/js/stl-viewer.js"></script>
+<!-- 2) Viewer modules -->
+<script type="module" src="{{ '/assets/js/stl-viewer.js'      | relative_url }}"></script>
 
-<script type="module" src="/assets/js/fluidsimviewer.js"></script>
+<script type="module" src="{{ '/assets/js/fluidsimviewer.js'  | relative_url }}"></script>
 
-<!-- 3) The FlowVisualization wrapper (IIFE) -->
-<script src="/assets/js/flow-visualization.js"></script>
+<!-- 3) FlowVisualization wrapper (IIFE) -->
+<script src="{{ '/assets/js/flow-visualization.js' | relative_url }}"></script>
 
-<!-- 4) Page-specific bootstrap calls -->
+<!-- 4) Page-specific bootstrap -->
 <script>
   FlowVisualization.staticViewer(
     'stl-demo',
-    '/assets/models/example.stl',
+    '{{ "/assets/models/example.stl" | relative_url }}',
     { color: 0xfacc15, cameraZ: 150 }
   );
 
   FlowVisualization.fluidViewer(
     'fluid-demo',
-    '/assets/models/airways/outlet',
+    '{{ "/assets/models/airways/outlet" | relative_url }}',
     59,
     { color: 0x1caaff, cameraZ: 120, frameDelay: 200 }
   );
