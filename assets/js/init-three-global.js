@@ -2,7 +2,8 @@
  * assets/js/init-three-global.js
  * ---------------------------------------------------------------------
  * Load Three.js, then dynamically fetch and register example controls/loaders,
- * skipping any missing or HTML responses to avoid import errors.
+ * skipping missing or invalid files, and rewrite both bare specifiers
+ * and relative imports so modules resolve correctly.
  * Exposes:
  *   window.THREE
  *   window.ThreeModules (OrbitControls, STLLoader, etc.)
@@ -15,7 +16,7 @@
 import * as THREE from './threejs/three.module.js';
 window.THREE = THREE;
 
-// 2) Prepare a registry for example modules
+// 2) Prepare registry for example modules
 window.ThreeModules = {};
 
 // 3) List of control/loader module paths relative to this file
@@ -25,51 +26,57 @@ const MODULE_PATHS = [
   'controls/DragControls.js',
   'controls/FirstPersonControls.js',
   'controls/FlyControls.js',
+  'controls/MapControls.js',
   'controls/PointerLockControls.js',
   'controls/TrackballControls.js',
   'controls/TransformControls.js',
   'loaders/STLLoader.js',
-  'loaders/ThreeDMLoader.js',
-  'loaders/ThreeMFLoader.js',
   'loaders/OBJLoader.js',
-  'loaders/VOXLoader.js',
-  // add any additional loaders you have locally
+  'loaders/VOXLoader.js'
 ];
 
-// Helper: fetch, validate, patch bare "from 'three'" imports, and import module
+// Helper: fetch, validate, patch imports, and import module
 async function loadAndPatch(subpath) {
-  const url = new URL(`./threejs/${subpath}`, import.meta.url).href;
+  const moduleUrl = new URL(`./threejs/${subpath}`, import.meta.url).href;
   try {
-    const resp = await fetch(url);
-    if (!resp.ok) {
-      console.warn(`init-three-global: skipping ${subpath} (HTTP ${resp.status})`);
-      return;
-    }
+    const resp = await fetch(moduleUrl);
+    if (!resp.ok) { console.warn(`init-three-global: skipping ${subpath} (HTTP ${resp.status})`); return; }
     const contentType = resp.headers.get('Content-Type') || '';
-    if (!contentType.includes('javascript') && !contentType.includes('application/ecmascript')) {
+    if (!contentType.includes('application/javascript') && !contentType.includes('ecmascript')) {
       console.warn(`init-three-global: skipping ${subpath} (invalid content-type: ${contentType})`);
       return;
     }
-    const src = await resp.text();
+    let src = await resp.text();
     if (src.trim().startsWith('<')) {
       console.warn(`init-three-global: skipping ${subpath} (HTML content)`);
       return;
     }
-    // patch bare specifiers
-    const threeRel = new URL('./threejs/three.module.js', import.meta.url).href;
-    const patched = src.replace(/from ['"]three['"]/g, `from '${threeRel}'`);
-    // blob & dynamic import
-    const blobUrl = URL.createObjectURL(new Blob([patched], { type: 'application/javascript' }));
+    // Patch bare 'three' imports
+    const threeUrl = new URL('./threejs/three.module.js', import.meta.url).href;
+    src = src.replace(/from ['"]three['"]/g, `from '${threeUrl}'`);
+
+    // Patch relative imports (e.g. './OrbitControls.js') to absolute URLs
+    const base = moduleUrl.replace(/[^/]+$/, '');
+    src = src.replace(/from ['"](\.\/[^'"\s]+)['"]/g, (_m, rel) => {
+      // remove leading './'
+      const relPath = rel.replace(/^[.]+\//, '');
+      return `from '${base + relPath}'`;
+    });
+
+    // Load via blob
+    const blob = new Blob([src], { type: 'application/javascript' });
+    const blobUrl = URL.createObjectURL(blob);
     const mod = await import(blobUrl);
-    // register exports globally
-    Object.keys(mod).forEach(key => window.ThreeModules[key] = mod[key]);
     URL.revokeObjectURL(blobUrl);
+
+    // Register exports globally
+    Object.keys(mod).forEach(k => window.ThreeModules[k] = mod[k]);
     console.log(`init-three-global: loaded ${subpath}`);
   } catch (err) {
     console.error(`init-three-global: error loading ${subpath}`, err);
   }
 }
 
-// Load all modules in parallel, skipping missing or invalid ones
+// Load all modules in parallel
 await Promise.all(MODULE_PATHS.map(loadAndPatch));
 console.log('✅ Three.js and available controls/loaders registered globally');
