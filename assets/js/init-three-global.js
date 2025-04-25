@@ -1,60 +1,53 @@
-/**
- * assets/js/init-three-global.js
- * ---------------------------------------------------------------------
- * Loads the ES-module build of Three.js plus a handful of controls /
- * loaders, then exposes them as easy-access globals so you can keep the
- * rest of your code in simple `<script>` files (or inline markdown tags)
- * without worrying about ESM import paths.
- *
- * Usage in HTML (must be type="module" so the imports work):
- * <script type="module" src="{{ '/assets/js/init-three-global.js' | relative_url }}"></script>
- *
- * Any script *after* that tag can rely on:
- *   window.THREE              -> Three core
- *   window.ThreeModules.*     -> OrbitControls, STLLoader, …
- * ---------------------------------------------------------------------
- */
-
-/* ---------- core Three.js ---------- */
+// File: assets/js/init-three-global.js
+// ──────────────────────────────────────────────────────────────────────
+// 1) Load core Three.js
+// 2) Dynamically fetch & rewrite every example-module so its bare
+//    `import … from 'three'` becomes a correct import from './three.module.js'
+// 3) Attach everything to window.THREE and window.ThreeModules
+// ──────────────────────────────────────────────────────────────────────
 import * as THREE from './threejs/three.module.js';
-
-/* ---------- Controls ---------- */
-import { OrbitControls }       from './threejs/controls/OrbitControls.js';
-import { ArcballControls }     from './threejs/controls/ArcballControls.js';
-import { DragControls }        from './threejs/controls/DragControls.js';
-import { FirstPersonControls } from './threejs/controls/FirstPersonControls.js';
-import { FlyControls }         from './threejs/controls/FlyControls.js';
-import { MapControls }         from './threejs/controls/MapControls.js';
-import { PointerLockControls } from './threejs/controls/PointerLockControls.js';
-import { TrackballControls }   from './threejs/controls/TrackballControls.js';
-import { TransformControls }   from './threejs/controls/TransformControls.js';
-
-/* ---------- Loaders ---------- */
-import { STLLoader }      from './threejs/loaders/STLLoader.js';
-import { ThreeDMLoader }  from './threejs/loaders/3DMLoader.js';
-import { ThreeMFLoader }  from './threejs/loaders/3MFLoader.js';
-import { GLTFLoader }     from './threejs/loaders/GLTFLoader.js';
-import { OBJLoader }      from './threejs/loaders/OBJLoader.js';
-import { VOXLoader }      from './threejs/loaders/VOXLoader.js';
-
-/* ---------- expose globally ---------- */
 window.THREE = THREE;
-window.ThreeModules = {
-  OrbitControls,
-  ArcballControls,
-  DragControls,
-  FirstPersonControls,
-  FlyControls,
-  MapControls,
-  PointerLockControls,
-  TrackballControls,
-  TransformControls,
-  STLLoader,
-  ThreeDMLoader,
-  ThreeMFLoader,
-  GLTFLoader,
-  OBJLoader,
-  VOXLoader,
-};
+window.ThreeModules = {};
 
-console.log('✅ Three.js and helper modules registered globally');
+// list every control & loader relative to this file
+const MODULE_PATHS = [
+  'controls/OrbitControls.js',
+  'controls/ArcballControls.js',
+  'controls/DragControls.js',
+  'controls/FirstPersonControls.js',
+  'controls/FlyControls.js',
+  'controls/MapControls.js',
+  'controls/PointerLockControls.js',
+  'controls/TrackballControls.js',
+  'controls/TransformControls.js',
+  'loaders/STLLoader.js',
+  'loaders/ThreeDMLoader.js',
+  'loaders/ThreeMFLoader.js',
+  'loaders/GLTFLoader.js',
+  'loaders/OBJLoader.js',
+  'loaders/VOXLoader.js'
+];
+
+// helper to load+patch a single module
+async function loadAndPatch(subpath) {
+  // derive full URL to the source file
+  const url = new URL(`./threejs/${subpath}`, import.meta.url).href;
+  // fetch its text
+  let src = await (await fetch(url)).text();
+  // rewrite bare `from 'three'` → relative import
+  const threeUrl = new URL('./threejs/three.module.js', import.meta.url).href;
+  src = src.replace(/from\s+['"]three['"]/g, `from '${threeUrl}'`);
+  // create a blob so we can import it
+  const blob = new Blob([src], { type: 'application/javascript' });
+  const blobUrl = URL.createObjectURL(blob);
+  const mod = await import(blobUrl);
+  // register every export under window.ThreeModules
+  for (const key of Object.keys(mod)) {
+    window.ThreeModules[key] = mod[key];
+  }
+}
+
+// load all modules in parallel
+await Promise.all(MODULE_PATHS.map(loadAndPatch));
+
+console.log('✅ Three.js + controls + loaders registered globally');
