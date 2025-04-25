@@ -198,28 +198,28 @@
 <h2 id="fluid-simulation-59-stl-frames">Fluid Simulation (59 STL Frames)</h2>
 <div id="fluid-demo" style="height:500px;"></div>
 
-<!-- 1️⃣  Three + controls/loaders -->
+<!-- 1) Three core + helpers -->
 <script type="module" src="/assets/js/init-three-global.js"></script>
 
-<!-- 2️⃣  Viewer modules (ES-modules that attach to window) -->
+<!-- 2) Viewer implementations -->
 <script type="module" src="/assets/js/stl-viewer.js"></script>
 
 <script type="module" src="/assets/js/fluidsimviewer.js"></script>
 
-<!-- 3️⃣  FlowVisualization wrapper (plain script, not a module) -->
+<!-- 3) Wrapper that exposes FlowVisualization -->
 <script src="/assets/js/flow-visualization.js"></script>
 
-<!-- 4️⃣  Page-specific bootstrap -->
+<!-- 4) Bootstrap AFTER "three-ready" event -->
 <script>
-  window.addEventListener('DOMContentLoaded', () => {
-    /* Single STL */
+  document.addEventListener('three-ready', () => {
+    /* single STL */
     FlowVisualization.staticViewer(
       'stl-demo',
       "/assets/models/example.stl",
       { color: 0xfacc15, cameraZ: 150 }
     );
 
-    /* Fluid sim */
+    /* 59-frame simulation */
     FlowVisualization.fluidViewer(
       'fluid-demo',
       "/assets/models/airways/outlet",

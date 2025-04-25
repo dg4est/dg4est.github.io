@@ -1,15 +1,16 @@
-// assets/js/fluidsimviewer.js
+/* ------------------------------------------------------------------ */
+/*  File: assets/js/fluidsimviewer.js                                 */
+/*  Exposes: window.FluidSimViewer                                    */
+/* ------------------------------------------------------------------ */
 export function FluidSimViewer(containerId, modelPaths, options = {}) {
+  /* ---------- 1  Mount-point ---------- */
   const container = document.getElementById(containerId);
-  if (!container) {
-    console.error(`Container '${containerId}' not found`);
-    return;
-  }
+  if (!container) { console.error(`FluidSimViewer: “${containerId}” not found`); return; }
 
-  /* ---------- THREE.js scene boilerplate ---------- */
-  const THREE = window.THREE;
-  const scene    = new THREE.Scene();
-  const camera   = new THREE.PerspectiveCamera(
+  /* ---------- 2  THREE scene + renderer ---------- */
+  const THREE  = window.THREE;
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
     75,
     container.clientWidth / container.clientHeight,
     0.1,
@@ -21,14 +22,18 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
-  const controls = new window.ThreeModules.OrbitControls(camera, renderer.domElement);
+  const OC = window.ThreeModules.OrbitControls;
+  if (typeof OC !== 'function') {
+    console.error('FluidSimViewer: OrbitControls not available'); return;
+  }
+  const controls = new OC(camera, renderer.domElement);
   controls.enableDamping = true;
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.6));
 
-  /* ---------- load STL frames ---------- */
-  const loader  = new window.ThreeModules.STLLoader();
-  const materialTemplate = new THREE.MeshStandardMaterial({ color: options.color || 0x1caaff });
+  /* ---------- 3  Load all STL frames ---------- */
+  const loader   = new window.ThreeModules.STLLoader();
+  const material = new THREE.MeshStandardMaterial({ color: options.color || 0x1caaff });
 
   const meshes = new Array(modelPaths.length);
   let loaded   = 0;
@@ -37,14 +42,14 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
     loader.load(
       file,
       geo => {
-        const mesh = new THREE.Mesh(geo, materialTemplate.clone());
+        const mesh = new THREE.Mesh(geo, material.clone());
         geo.computeBoundingBox();
         geo.boundingBox.getCenter(mesh.position).negate();
         mesh.visible = false;
         scene.add(mesh);
         meshes[idx] = mesh;
 
-        if (++loaded === modelPaths.length) {
+        if (++loaded === modelPaths.length) {        // everything ready
           meshes[0].visible = true;
           animate();
           play();
@@ -55,17 +60,17 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
     );
   });
 
-  /* ---------- animation controls ---------- */
-  let animationInterval = null;   //  ← declare before play/pause use it
+  /* ---------- 4  Animation controls ---------- */
+  let animationInterval = null;                      // declared *before* play()
 
   function showFrame(i) { meshes.forEach((m, k) => (m.visible = k === i)); }
 
   function play() {
-    if (animationInterval) return;               // already playing
-    let index = 0;
+    if (animationInterval) return;                   // already running
+    let i = 0;
     animationInterval = setInterval(() => {
-      index = (index + 1) % meshes.length;
-      showFrame(index);
+      i = (i + 1) % meshes.length;
+      showFrame(i);
     }, options.frameDelay || 150);
   }
 
@@ -77,18 +82,21 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
   window.playFluid  = play;
   window.pauseFluid = pause;
 
-  /* ---------- render loop ---------- */
+  /* ---------- 5  Render loop ---------- */
   function animate() {
     requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
   }
 
-  /* ---------- resize handling ---------- */
+  /* ---------- 6  Responsive resize ---------- */
   window.addEventListener('resize', () => {
-    const { clientWidth: w, clientHeight: h } = container;
+    const w = container.clientWidth, h = container.clientHeight;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
   });
 }
+
+/* expose for FlowVisualization wrapper */
+window.FluidSimViewer = FluidSimViewer;
