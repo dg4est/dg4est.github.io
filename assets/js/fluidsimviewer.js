@@ -55,12 +55,26 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
       meshes[index] = mesh;
 
       if (meshes.filter(Boolean).length === totalFrames && index === totalFrames - 1) {
-        document.getElementById("loading-message")?.remove();
+        document.getElementById("fluid-loading-message")?.remove();
         meshes[0].visible = true;
         animate();
         play();
       }
     });
+  });
+  // Begin render as soon as the last outstanding load completes
+  let loadedCount = 0;
+  loader.load(path, geometry => {
+    /* … create mesh … */
+    meshes[index] = mesh;
+    loadedCount++;
+
+    if (loadedCount === totalFrames) {        // ← start here
+      document.getElementById("fluid-loading-message")?.remove();
+      meshes[0].visible = true;
+      animate();
+      play();
+    }
   });
 
   function showFrame(index) {
@@ -96,3 +110,4 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
   window.pauseFluid = pause;
   window.playFluid = play;
 }
+window.FluidSimViewer = FluidSimViewer; // export to a final window

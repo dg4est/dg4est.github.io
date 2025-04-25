@@ -142,7 +142,15 @@
 
     {% include scripts.html %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- load the 3.js modules globally for use within default layout-->
+        <!-- load the 3.js modules globally for use within default layout-->
+    <script type="module" src="{{ '/assets/js/init-three-global.js' | relative_url }}"></script>
+    <!-- need to seperately load viewers and wrappers -->
+    <!-- viewer implementations -->
+    <script type="module" src="{{ '/assets/js/stl-viewer.js'      | relative_url }}"></script>
+    <script type="module" src="{{ '/assets/js/fluidsimviewer.js'  | relative_url }}"></script>
+
+    <!-- FlowVisualization wrapper -->
+    <script src="{{ '/assets/js/flow-visualization.js' | relative_url }}"></script>
     <script type="module" src="{{ '/assets/js/init-three-global.js' | relative_url }}"></script>
   </body>
 </html>
