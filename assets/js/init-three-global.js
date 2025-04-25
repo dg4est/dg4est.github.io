@@ -1,51 +1,47 @@
 // File: assets/js/init-three-global.js
-// ───────────────────────────────────────────────────────
-// Load core Three.js locally, then import all controls
-// and loaders from the official unpkg CDN. Expose them
-// on window.THREE and window.ThreeModules.
-// Include this via <script type="module"> in your docs layout.
-// ───────────────────────────────────────────────────────
+// ------------------------------------------------------------
+// 1) Import core Three.js (local file, must be three.module.js)
+// 2) Dynamically import all controls & loaders from unpkg
+// 3) Expose them on window.THREE and window.ThreeModules
+// ------------------------------------------------------------
 
-import * as THREE from './threejs/three.module.js';
+import * as THREE from './threejs/three.module.js';  
 window.THREE = THREE;
 
-// Pull controls and loaders from CDN (versions must match your local three.module.js)
+// Version must match your local three.module.js
 const version = '0.160.0';
-const base   = `https://unpkg.com/three@${version}/examples/jsm`;
+const baseURL = `https://unpkg.com/three@${version}/examples/jsm`;
 
-// Controls
-import { OrbitControls }       from `${base}/controls/OrbitControls.js`;
-import { ArcballControls }     from `${base}/controls/ArcballControls.js`;
-import { DragControls }        from `${base}/controls/DragControls.js`;
-import { FirstPersonControls } from `${base}/controls/FirstPersonControls.js`;
-import { FlyControls }         from `${base}/controls/FlyControls.js`;
-import { MapControls }         from `${base}/controls/MapControls.js`;
-import { PointerLockControls } from `${base}/controls/PointerLockControls.js`;
-import { TrackballControls }   from `${base}/controls/TrackballControls.js`;
-import { TransformControls }   from `${base}/controls/TransformControls.js`;
+const MODULES = {
+  // controls
+  OrbitControls:   `${baseURL}/controls/OrbitControls.js`,
+  ArcballControls: `${baseURL}/controls/ArcballControls.js`,
+  DragControls:    `${baseURL}/controls/DragControls.js`,
+  FirstPersonControls: `${baseURL}/controls/FirstPersonControls.js`,
+  FlyControls:     `${baseURL}/controls/FlyControls.js`,
+  MapControls:     `${baseURL}/controls/MapControls.js`,
+  PointerLockControls: `${baseURL}/controls/PointerLockControls.js`,
+  TrackballControls:   `${baseURL}/controls/TrackballControls.js`,
+  TransformControls:   `${baseURL}/controls/TransformControls.js`,
 
-// Loaders
-import { STLLoader }    from `${base}/loaders/STLLoader.js`;
-import { GLTFLoader }   from `${base}/loaders/GLTFLoader.js`;
-import { OBJLoader }    from `${base}/loaders/OBJLoader.js`;
-import { VOXLoader }    from `${base}/loaders/VOXLoader.js`;
-// …add others you need…
-
-// Expose them
-window.ThreeModules = {
-  OrbitControls,
-  ArcballControls,
-  DragControls,
-  FirstPersonControls,
-  FlyControls,
-  MapControls,
-  PointerLockControls,
-  TrackballControls,
-  TransformControls,
-  STLLoader,
-  GLTFLoader,
-  OBJLoader,
-  VOXLoader
+  // loaders
+  STLLoader:  `${baseURL}/loaders/STLLoader.js`,
+  GLTFLoader: `${baseURL}/loaders/GLTFLoader.js`,
+  OBJLoader:  `${baseURL}/loaders/OBJLoader.js`,
+  VOXLoader:  `${baseURL}/loaders/VOXLoader.js`,
 };
 
-console.log('✅ Three.js + controls/loaders (from CDN) registered globally');
+window.ThreeModules = {};
+
+for (const [name, url] of Object.entries(MODULES)) {
+  try {
+    const mod = await import(/* @vite-ignore */ url);
+    // each module exports a class of the same name
+    window.ThreeModules[name] = mod[name];
+    console.log(`init-three-global: loaded ${name}`);
+  } catch (err) {
+    console.warn(`init-three-global: failed to load ${name} from ${url}`, err);
+  }
+}
+
+console.log('✅ Three.js + controls & loaders registered globally');
