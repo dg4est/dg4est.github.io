@@ -1,15 +1,24 @@
-// File: assets/js/init-three-global.js
-// ──────────────────────────────────────────────────────────────────────
+/**
+ * assets/js/init-three-global.js
+ * ---------------------------------------------------------------------
+ * Load Three.js, then dynamically fetch and register example controls/loaders,
+ * skipping any missing or HTML responses to avoid import errors.
+ * Exposes:
+ *   window.THREE
+ *   window.ThreeModules (OrbitControls, STLLoader, etc.)
+ *
+ * Include this with `<script type="module">` in your layout.
+ * ---------------------------------------------------------------------
+ */
+
 // 1) Load core Three.js
-// 2) Dynamically fetch & rewrite every example-module so its bare
-//    `import … from 'three'` becomes a correct import from './three.module.js'
-// 3) Attach everything to window.THREE and window.ThreeModules
-// ──────────────────────────────────────────────────────────────────────
 import * as THREE from './threejs/three.module.js';
 window.THREE = THREE;
+
+// 2) Prepare a registry for example modules
 window.ThreeModules = {};
 
-// list every control & loader relative to this file
+// 3) List of control/loader module paths relative to this file
 const MODULE_PATHS = [
   'controls/OrbitControls.js',
   'controls/ArcballControls.js',
@@ -25,29 +34,44 @@ const MODULE_PATHS = [
   'loaders/ThreeMFLoader.js',
   'loaders/GLTFLoader.js',
   'loaders/OBJLoader.js',
-  'loaders/VOXLoader.js'
+  'loaders/VOXLoader.js',
+  // add any additional loaders you have locally
 ];
 
-// helper to load+patch a single module
+// Helper: fetch, validate, patch bare "from 'three'" imports, and import module
 async function loadAndPatch(subpath) {
-  // derive full URL to the source file
   const url = new URL(`./threejs/${subpath}`, import.meta.url).href;
-  // fetch its text
-  let src = await (await fetch(url)).text();
-  // rewrite bare `from 'three'` → relative import
-  const threeUrl = new URL('./threejs/three.module.js', import.meta.url).href;
-  src = src.replace(/from\s+['"]three['"]/g, `from '${threeUrl}'`);
-  // create a blob so we can import it
-  const blob = new Blob([src], { type: 'application/javascript' });
-  const blobUrl = URL.createObjectURL(blob);
-  const mod = await import(blobUrl);
-  // register every export under window.ThreeModules
-  for (const key of Object.keys(mod)) {
-    window.ThreeModules[key] = mod[key];
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) {
+      console.warn(`init-three-global: skipping ${subpath} (HTTP ${resp.status})`);
+      return;
+    }
+    const contentType = resp.headers.get('Content-Type') || '';
+    if (!contentType.includes('javascript') && !contentType.includes('application/ecmascript')) {
+      console.warn(`init-three-global: skipping ${subpath} (invalid content-type: ${contentType})`);
+      return;
+    }
+    const src = await resp.text();
+    if (src.trim().startsWith('<')) {
+      console.warn(`init-three-global: skipping ${subpath} (HTML content)`);
+      return;
+    }
+    // patch bare specifiers
+    const threeRel = new URL('./threejs/three.module.js', import.meta.url).href;
+    const patched = src.replace(/from ['"]three['"]/g, `from '${threeRel}'`);
+    // blob & dynamic import
+    const blobUrl = URL.createObjectURL(new Blob([patched], { type: 'application/javascript' }));
+    const mod = await import(blobUrl);
+    // register exports globally
+    Object.keys(mod).forEach(key => window.ThreeModules[key] = mod[key]);
+    URL.revokeObjectURL(blobUrl);
+    console.log(`init-three-global: loaded ${subpath}`);
+  } catch (err) {
+    console.error(`init-three-global: error loading ${subpath}`, err);
   }
 }
 
-// load all modules in parallel
+// Load all modules in parallel, skipping missing or invalid ones
 await Promise.all(MODULE_PATHS.map(loadAndPatch));
-
-console.log('✅ Three.js + controls + loaders registered globally');
+console.log('✅ Three.js and available controls/loaders registered globally');
