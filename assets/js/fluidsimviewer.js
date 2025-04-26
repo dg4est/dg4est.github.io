@@ -1,14 +1,13 @@
 /* ------------------------------------------------------------------ */
 /*  File: assets/js/fluidsimviewer.js                                 */
-/*  Exposes: window.FluidSimViewer                                    */
 /* ------------------------------------------------------------------ */
 export function FluidSimViewer(containerId, modelPaths, options = {}) {
-  /* ---------- 1  Mount-point ---------- */
+  /* ---------- mount point ---------- */
   const container = document.getElementById(containerId);
   if (!container) { console.error(`FluidSimViewer: “${containerId}” not found`); return; }
 
-  /* ---------- 2  THREE scene + renderer ---------- */
-  const THREE  = window.THREE;
+  /* ---------- THREE scene ---------- */
+  const THREE = window.THREE;
   const scene  = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     75,
@@ -23,17 +22,18 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
   container.appendChild(renderer.domElement);
 
   const OC = window.ThreeModules.OrbitControls;
-  if (typeof OC !== 'function') {
-    console.error('FluidSimViewer: OrbitControls not available'); return;
-  }
+  if (typeof OC !== 'function') { console.error('OrbitControls missing'); return; }
   const controls = new OC(camera, renderer.domElement);
   controls.enableDamping = true;
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.6));
 
-  /* ---------- 3  Load STL frames ---------- */
-  const loader   = new window.ThreeModules.STLLoader();
-  const material = new THREE.MeshStandardMaterial({ color: options.color || 0x1caaff });
+  /* ---------- load STL frames ---------- */
+  const loader = new window.ThreeModules.STLLoader();
+  const templateMat = new THREE.MeshStandardMaterial({
+    color: options.color || 0x1caaff,
+    side : THREE.DoubleSide           // draw back faces so inverted normals show
+  });
 
   const meshes = new Array(modelPaths.length);
   let loaded   = 0;
@@ -42,15 +42,16 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
     loader.load(
       file,
       geo => {
-        const mesh = new THREE.Mesh(geo, material.clone());
+        const mesh = new THREE.Mesh(geo, templateMat.clone());
         geo.computeBoundingBox();
         geo.boundingBox.getCenter(mesh.position).negate();
         mesh.visible = false;
         scene.add(mesh);
         meshes[idx] = mesh;
 
-        if (++loaded === modelPaths.length) {        // everything ready
-          meshes[0].visible = true;
+        if (++loaded === modelPaths.length) {   // every frame ready
+          (meshes.find(m => m) || mesh).visible = true; // show first real mesh
+          fitCamera(geo);                       // zoom so the model is on-screen
           animate();
           play();
         }
@@ -60,36 +61,41 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
     );
   });
 
-  /* ---------- 4  Animation controls ---------- */
-  let animationInterval = null;                      // declare before play()
+  /* ---------- animation controls ---------- */
+  let animationInterval = null;      // declare before play()
 
-  function showFrame(i) { meshes.forEach((m, k) => (m.visible = k === i)); }
+  function show(i) { meshes.forEach((m,k)=>m && (m.visible = k===i)); }
 
   function play() {
-    if (animationInterval) return;                  // already playing
+    if (animationInterval) return;   // already running
     let i = 0;
     animationInterval = setInterval(() => {
       i = (i + 1) % meshes.length;
-      showFrame(i);
+      show(i);
     }, options.frameDelay || 150);
   }
-
-  function pause() {
-    clearInterval(animationInterval);
-    animationInterval = null;
-  }
+  function pause() { clearInterval(animationInterval); animationInterval=null; }
 
   window.playFluid  = play;
   window.pauseFluid = pause;
 
-  /* ---------- 5  Render loop ---------- */
+  /* ---------- helpers ---------- */
+  function fitCamera(geometry) {
+    geometry.computeBoundingSphere();
+    const r = geometry.boundingSphere.radius;
+    camera.position.set(0, 0, r * 2.5);
+    controls.target.set(0, 0, 0);
+    controls.update();
+  }
+
+  /* ---------- render loop ---------- */
   function animate() {
     requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
   }
 
-  /* ---------- 6  Responsive resize ---------- */
+  /* ---------- responsive resize ---------- */
   window.addEventListener('resize', () => {
     const w = container.clientWidth, h = container.clientHeight;
     camera.aspect = w / h;
@@ -97,6 +103,4 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
     renderer.setSize(w, h);
   });
 }
-
-/* expose for FlowVisualization wrapper */
 window.FluidSimViewer = FluidSimViewer;
