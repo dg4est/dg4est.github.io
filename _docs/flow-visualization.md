@@ -12,27 +12,29 @@ permalink: /docs/flow-visualization/
 ## Fluid Simulation (59 STL Frames)  
 <div id="fluid-demo" style="height:500px;"></div>
 
-<!-- 1) Three core + helpers -->
+<!-- 1️⃣ Three core + helper modules -->
 <script type="module" src="{{ '/assets/js/init-three-global.js' | relative_url }}"></script>
 
-<!-- 2) Viewer implementations -->
-<script type="module" src="{{ '/assets/js/stl-viewer.js' | relative_url }}"></script>
-<script type="module" src="{{ '/assets/js/fluidsimviewer.js' | relative_url }}"></script>
+<!-- 2️⃣ Viewer implementations (ES-modules) -->
+<script type="module" src="{{ '/assets/js/stl-viewer.js'      | relative_url }}"></script>
+<script type="module" src="{{ '/assets/js/fluidsimviewer.js'  | relative_url }}"></script>
 
-<!-- 3) Wrapper that exposes FlowVisualization -->
+<!-- 3️⃣ Wrapper that provides FlowVisualization (plain script) -->
 <script src="{{ '/assets/js/flow-visualization.js' | relative_url }}"></script>
 
-<!-- 4) Bootstrap AFTER "three-ready" event -->
+<!-- 4️⃣ Bootstrap: two separate listeners for clarity -->
 <script>
+  /* Single STL model */
   document.addEventListener('three-ready', () => {
-    /* single STL */
     FlowVisualization.staticViewer(
       'stl-demo',
       {{ '/assets/models/example.stl' | relative_url | jsonify }},
       { color: 0xfacc15, cameraZ: 150 }
     );
+  });
 
-    /* 59-frame simulation */
+  /* 59-frame fluid simulation */
+  document.addEventListener('three-ready', () => {
     FlowVisualization.fluidViewer(
       'fluid-demo',
       {{ '/assets/models/airways/outlet' | relative_url | jsonify }},
