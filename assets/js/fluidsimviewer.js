@@ -31,7 +31,7 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.6));
 
-  /* ---------- 3  Load all STL frames ---------- */
+  /* ---------- 3  Load STL frames ---------- */
   const loader   = new window.ThreeModules.STLLoader();
   const material = new THREE.MeshStandardMaterial({ color: options.color || 0x1caaff });
 
@@ -61,12 +61,12 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
   });
 
   /* ---------- 4  Animation controls ---------- */
-  let animationInterval = null;                      // declared *before* play()
+  let animationInterval = null;                      // declare before play()
 
   function showFrame(i) { meshes.forEach((m, k) => (m.visible = k === i)); }
 
   function play() {
-    if (animationInterval) return;                   // already running
+    if (animationInterval) return;                  // already playing
     let i = 0;
     animationInterval = setInterval(() => {
       i = (i + 1) % meshes.length;
