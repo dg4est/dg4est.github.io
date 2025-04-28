@@ -1,59 +1,71 @@
 /**********************************************************************
- * assets/js/topoShader.js
- * --------------------------------------------------------------------
- * “Depth-to-Rainbow” shader
- * --------------------------------------------------------------------
- * Converts camera-space depth (near → far) to a rainbow:
- *      blue → cyan → green → yellow → red.
- *
- * Exported helpers:
- *   • depthShader………… raw shader object (vertex + fragment)
- *   • makeDepthMaterial(camera) → ShaderMaterial
- *       - binds camera.near / camera.far so the colour range matches
- *         the active camera.
- *
- * The material is double-sided so STL files with flipped normals
- * still render.
+ * topoShader.js  —  depth-rainbow *with* lambert shading
  *********************************************************************/
 import * as THREE from 'three';
 
-/* ---------- raw shader definition -------------------------------- */
-export const depthShader = {
+/* ---------- raw GLSL program ------------------------------------- */
+export const depthLambertShader = {
   uniforms: {
-    uNear : { value: 0.1 },        // camera.near  (filled in later)
-    uFar  : { value: 1000.0 }      // camera.far
+    uLightDir : { value: new THREE.Vector3(0.6, 0.7, 0.4).normalize() },
+    uMinD     : { value: 1.0 },
+    uMaxD     : { value: 10.0 }
   },
 
-  /* Pass view-space Z (positive forward) to the fragment shader.     */
   vertexShader: /* glsl */`
     varying float vDepth;
-    void main() {
-      vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
-      vDepth = -viewPos.z;                 // depth always positive
+    varying vec3  vNormal;
+
+    void main(){
+      vec4 viewPos = modelViewMatrix * vec4(position,1.0);
+      vDepth  = -viewPos.z;            /* camera-space Z, positive fwd */
+      vNormal = normalize(normalMatrix * normal);
       gl_Position = projectionMatrix * viewPos;
     }`,
 
-  /* Simple 5-segment rainbow ramp                                    */
   fragmentShader: /* glsl */`
     varying float vDepth;
-    uniform float uNear, uFar;
+    varying vec3  vNormal;
 
-    vec3 rainbow(float t){             // t in 0-1
-      return clamp(abs(mod(t*5.0 + vec3(0,2,4),10.0) - 5.0) - 1.0,
-                   0.0, 1.0);
+    uniform vec3  uLightDir;
+    uniform float uMinD, uMaxD;
+
+    /* rainbow ramp: blue→red */
+    vec3 rainbow(float t){
+      return clamp(abs(mod(t*5.0 + vec3(0,2,4),10.0)-5.0)-1.0,0.0,1.0);
     }
 
-    void main() {
-      float t = clamp((vDepth - uNear) / (uFar - uNear), 0.0, 1.0);
-      gl_FragColor = vec4(rainbow(t), 1.0);
+    void main(){
+      /* 1) depth → rainbow colour                                    */
+      float t = clamp( (vDepth - uMinD) / (uMaxD - uMinD), 0.0, 1.0 );
+      vec3  baseCol = rainbow(t);
+
+      /* 2) simple lambert                                             */
+      float lambert = max(dot( normalize(uLightDir), normalize(vNormal) ), 0.0);
+
+      gl_FragColor = vec4(baseCol * lambert, 1.0);
     }`
 };
 
-/* ---------- convenience factory ---------------------------------- */
-export function makeDepthMaterial(camera){
-  const mat = new THREE.ShaderMaterial(depthShader);
-  mat.uniforms.uNear.value = camera.near;
-  mat.uniforms.uFar.value  = camera.far;
-  mat.side = THREE.DoubleSide;           // render back-faces too
+/* ---------- helper: build material with *local* min/max depth ---- */
+export function makeDepthMaterial(geometry){
+  /* compute depth range in the mesh’s own view (assumes it has
+     been positioned already)                                         */
+  let minD =  1e9;
+  let maxD = -1e9;
+
+  const pos = geometry.attributes.position;
+  const m   = new THREE.Matrix4();
+  geometry.computeBoundingSphere();          /* ensures matrixWorld up-to-date */
+
+  for (let i=0; i<pos.count; i++){
+    const v = new THREE.Vector3().fromBufferAttribute(pos,i).applyMatrix4(m);
+    minD = Math.min(minD, -v.z);
+    maxD = Math.max(maxD, -v.z);
+  }
+
+  const mat = new THREE.ShaderMaterial(depthLambertShader);
+  mat.uniforms.uMinD.value = minD;
+  mat.uniforms.uMaxD.value = maxD;
+  mat.side = THREE.DoubleSide;
   return mat;
 }
