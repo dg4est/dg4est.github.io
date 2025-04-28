@@ -49,6 +49,6 @@ export function makeTopoMaterial(minY, maxY){
   const mat = new THREE.ShaderMaterial(topoShader);
   mat.uniforms.uMinY.value = minY;
   mat.uniforms.uMaxY.value = maxY;
-  mat.side = THREE.DoubleSide;          // show back-faces also
+  mat.side = THREE.DoubleSide;          // show back-faces too
   return mat;
 }
