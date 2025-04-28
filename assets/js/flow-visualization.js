@@ -156,34 +156,45 @@
      * The helper camera NEVER copies the scene camera (so the widget
      * stays in a stable 2-D orientation, like CAD view-cubes).
      */
+    /* ─── orbit gizmo: fixed 2-D position, but matches scene rotation ─── */
     static #addAxesOverlay(parent) {
       const W = 100, H = 100;
+
+      /* 1 – overlay canvas -------------------------------------------- */
       const canvas = document.createElement('canvas');
       Object.assign(canvas.style, {
         position      : 'absolute',
         width         : `${W}px`,
         height        : `${H}px`,
-        inset         : '.5rem .5rem auto auto',  /* top-right corner  */
-        zIndex        : 1,
+        inset         : '.5rem .5rem auto auto',  // top-right
+        zIndex        : 1,                        // above WebGL canvas
         pointerEvents : 'none'
       });
       parent.appendChild(canvas);
 
-      /* Tiny Three.js scene just for the gizmo --------------------- */
-      const THREE = window.THREE;
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+      /* 2 – tiny Three.js pipeline ------------------------------------ */
+      const THREE     = window.THREE;
+      const renderer  = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
       renderer.setSize(W, H);
 
-      const scene = new THREE.Scene();
-      const cam   = new THREE.PerspectiveCamera(50, W/H, .1, 10);
-      cam.position.set(1.2, 1.2, 1.2);        // isometric look
-      cam.lookAt(0,0,0);
+      const scene     = new THREE.Scene();
+      const gizmoCam  = new THREE.PerspectiveCamera(50, W / H, 0.1, 10);
+      gizmoCam.position.set(1.2, 1.2, 1.2);      // view cube look
+      gizmoCam.lookAt(0, 0, 0);
+
+      /* AxesHelper whose orientation we’ll keep updating */
       scene.add(new THREE.AxesHelper(0.8));
 
-      /* Continuous render loop (no linkage to main viewers) -------- */
-      (function renderGizmo(){
+      /* 3 – animation loop: copy orientation, render gizmo ----------- */
+      (function renderGizmo() {
         requestAnimationFrame(renderGizmo);
-        renderer.render(scene, cam);
+
+        /* main viewers set window._fvCam = their camera each frame */
+        if (window._fvCam) {
+          gizmoCam.quaternion.copy(window._fvCam.quaternion);
+        }
+
+        renderer.render(scene, gizmoCam);
       })();
     }
   }
