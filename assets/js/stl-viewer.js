@@ -2,7 +2,7 @@
  * ONE-OFF STL VIEWER                                                *
  * Uses orbit controls, auto-fit camera and rainbow height shader.   *
  *********************************************************************/
-import { makeTopoMaterial } from './topoShader.js';
+import { makeDepthMaterial } from './topoShader.js';
 
 export function STLViewer(containerId, modelPath, options = {}) {
   /* ---------- 1. Container & renderer ---------------------------- */
@@ -49,7 +49,7 @@ export function STLViewer(containerId, modelPath, options = {}) {
     geo => {
       /* compute y-range BEFORE recentring                            */
       geo.computeBoundingBox();
-      const mat = makeTopoMaterial(geo.boundingBox.min.y,
+      const mat = makeDepthMaterial(geo.boundingBox.min.y,
                                    geo.boundingBox.max.y);
 
       const mesh = new THREE.Mesh(geo, mat);
