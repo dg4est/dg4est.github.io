@@ -2,7 +2,7 @@
  * MULTI-FRAME STL ANIMATION VIEWER                                  *
  * Shows 1…N frames, rainbow shader, play / pause API.               *
  *********************************************************************/
-import { makeTopoMaterial } from './topoShader.js';
+import { makeDepthMaterial} from './topoShader.js';
 
 export function FluidSimViewer(containerId, modelPaths, options = {}) {
   /* ---------- 1. Mount-point & renderer -------------------------- */
@@ -40,7 +40,7 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
         /* build rainbow shader material once --------------------- */
         if (!topoMat){
           geo.computeBoundingBox();
-          topoMat = makeTopoMaterial(geo.boundingBox.min.y,
+          topoMat = makeDepthMaterial(geo.boundingBox.min.y,
                                      geo.boundingBox.max.y);
         }
         const mesh = new THREE.Mesh(geo, topoMat.clone());
