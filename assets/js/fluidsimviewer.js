@@ -23,9 +23,26 @@ export function FluidSimViewer(containerId, modelPaths, options = {}) {
   controls.enableDamping = true;
 
   /* lights -------------------------------------------------------- */
-  scene.add(new THREE.HemisphereLight(0xffffff,0x444444,0.6));
-  const sun = new THREE.DirectionalLight(0xffffff,0.8);
-  sun.position.set(100,100,100); scene.add(sun);
+  /* very low-level ambient so nothing is pitch-black */
+  scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+
+  /* cool sky / warm ground tint */
+  scene.add(new THREE.HemisphereLight(0xb1e1ff, 0x444422, 0.35));
+
+  /* key light – warm, 45° overhead */
+  const key = new THREE.DirectionalLight(0xfff2e5, 0.9);
+  key.position.set(7, 10, 5);
+  scene.add(key);
+
+  /* fill light – cool, opposite side, softer */
+  const fill = new THREE.DirectionalLight(0xccddff, 0.4);
+  fill.position.set(-6, 4, -4);
+  scene.add(fill);
+
+  /* rim light – bright edge highlight from behind */
+  const rim = new THREE.DirectionalLight(0xffffff, 0.6);
+  rim.position.set(0, 5, -10);
+  scene.add(rim);
 
   /* ---------- 2. Load frames ------------------------------------- */
   const loader   = new window.ThreeModules.STLLoader();
