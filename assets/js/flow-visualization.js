@@ -1,173 +1,151 @@
-/**
- * flow-visualization.js
- * ------------------------------------------------------------
- * Helper for rendering single STL models or looping STL “frames”
- * (e.g. CFD simulation) inside a page without inline HTML/JS.
- *
- * Dependencies (include before this script):
- *   <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
- *   <script src="/path/to/STLViewer.js"></script>      // must expose window.STLViewer
- *   <script src="/path/to/FluidSimViewer.js"></script> // must expose window.FluidSimViewer + play/pause methods
- *
- * Public API:
- *   FlowVisualization.staticViewer(target, modelUrl, options)
- *   FlowVisualization.fluidViewer(target, basePath, frameCount, options)
- *
- *   • target        – HTMLElement | string (id of mount point)
- *   • modelUrl      – string – `.stl` file for single model
- *   • basePath      – string – prefix path (e.g. '/assets/models/airways/outlet')
- *   • frameCount    – number  – last frame index (files are assumed 1 … frameCount)
- *   • options       – { color, cameraZ, frameDelay }
- *
- * Example:
- *   FlowVisualization.staticViewer('stl-example', '/assets/models/example.stl', { color: 0xfacc15 });
- *
- *   FlowVisualization.fluidViewer('fluid-demo', '/assets/models/airways/outlet', 59,
- *                                 { color: 0x1caaff, frameDelay: 200 });
- * ------------------------------------------------------------
- */
+/* ------------------------------------------------------------------ */
+/*  File: assets/js/flow-visualization.js                             */
+/*  Exposes: window.FlowVisualization                                */
+/* ------------------------------------------------------------------ */
 (function () {
   class FlowVisualization {
-    /* -------------------------------------------------- */
-    /*          PRIVATE STATIC STATE &  UTILITIES         */
-    /* -------------------------------------------------- */
-    /**
-     * Monotonic counter used to mint unique element IDs.
-     * Declared as a *private static* field so TypeScript (and
-     * modern browsers) know it exists — this fixes the
-     * “Private field '#counter' must be declared” error.
-     */
-    static #counter = 0;
-
-    /** Return a unique id in the form `${prefix}-N`. */
-    static #uniqueId(prefix = "fv") {
-      return `${prefix}-${++FlowVisualization.#counter}`;
-    }
-
-    /** Resolve a string id → HTMLElement, or return the element passed */
-    static #resolveTarget(t) {
-      const el = typeof t === "string" ? document.getElementById(t) : t;
-      if (!el) {
-        throw new Error(`FlowVisualization: mount point "${t}" not found`);
-      }
+    /* ---------- private utilities ---------- */
+    static #ctr = 0;
+    static #uid(p = 'fv') { return `${p}-${++this.#ctr}`; }
+    static #el(idOrEl) {
+      const el = typeof idOrEl === 'string' ? document.getElementById(idOrEl) : idOrEl;
+      if (!el) throw Error(`FlowVisualization: mount “${idOrEl}” not found`);
       return el;
     }
-
-    /** Create a styled viewer container */
-    static #makeViewerDiv(id) {
-      const div = document.createElement("div");
+    // Viewer Box Elements modular and resizable for config
+    static #viewerBox(id) {
+      const div = document.createElement('div');
       div.id = id;
       Object.assign(div.style, {
-        width: "100%",
-        height: "500px",
-        border: "1px solid #444",
-        backgroundColor: "#121212",
+        position: 'relative',
+        width: '100%',
+        height: '500px',
+        border: '1px solid #444',
+        background: '#121212',
+        overflow: 'hidden'
       });
       return div;
     }
-
-    /** Create a status banner (hidden if `hidden=true`) */
-    static #banner(msg, color, hidden = false) {
-      const div = document.createElement("div");
-      div.textContent = msg;
-      Object.assign(div.style, {
-        textAlign: "center",
+    static #banner(txt, color) {
+      const b = document.createElement('div');
+      b.textContent = txt;
+      Object.assign(b.style, {
+        position: 'absolute',
+        inset: '0 0 auto 0',
+        textAlign: 'center',
+        padding: '.5rem',
+        background: 'transparent',
         color,
-        marginBottom: "1rem",
-        display: hidden ? "none" : "block",
+        pointerEvents: 'none'
       });
-      return div;
+      return b;
     }
-
-    /** Convenience wrapper for play/pause buttons */
-    static #makeControls() {
-      const wrap = document.createElement("div");
-      Object.assign(wrap.style, { textAlign: "center", marginTop: "1rem" });
-
-      const play = document.createElement("button");
-      play.textContent = "▶ Play";
-      play.className = "btn btn-success me-2";
-
-      const pause = document.createElement("button");
-      pause.textContent = "⏸ Pause";
-      pause.className = "btn btn-danger";
-
+    static #overlayButtons() {
+      const wrap = document.createElement('div');
+      Object.assign(wrap.style, {
+        position: 'absolute',
+        top: '.5rem',
+        right: '.5rem',
+        display: 'flex',
+        gap: '.4rem',
+        zIndex: 2
+      });
+      // use the built in document and Play extenders
+      const mk = (txt, cls) => {
+        const btn = document.createElement('button');
+        btn.textContent = txt;
+        btn.className = `btn btn-sm ${cls}`;
+        return btn;
+      };
+      const play  = mk('▶', 'btn-success');
+      const pause = mk('⏸', 'btn-danger');
       wrap.append(play, pause);
+      // buttons must be wrappable and or resizable for window size
       return Object.assign(wrap, { play, pause });
     }
 
-    /* -------------------------------------------------- */
-    /*                    PUBLIC  API                     */
-    /* -------------------------------------------------- */
+    /* ---------- public API ---------- */
 
-    /**
-     * Render a *single* STL model.
-     * @param {HTMLElement|string} target  Mount point (id or element)
-     * @param {string} modelUrl            STL file to load
-     * @param {object} opts                Viewer options (color, cameraZ, …)
-     */
-    static staticViewer(target, modelUrl, opts = {}) {
-      const mount = FlowVisualization.#resolveTarget(target);
-      const viewerId = FlowVisualization.#uniqueId("stl");
-      const viewerDiv = FlowVisualization.#makeViewerDiv(viewerId);
-      mount.appendChild(viewerDiv);
+    static staticViewer(target, stlUrl, opts = {}) {
+      const mount     = this.#el(target);
+      const boxId     = this.#uid('stl');
+      const box       = this.#viewerBox(boxId);
+      mount.appendChild(box);
 
-      // Delegate to the existing viewer implementation
-      window.STLViewer?.(viewerId, modelUrl, opts);
+      this.#addAxesOverlay(box);            // NEW: orbit widget 
+      window.STLViewer?.(boxId, stlUrl, opts);
     }
 
-    /**
-     * Render a *sequence* of STL frames (e.g. CFD simulation).
-     * @param {HTMLElement|string} target  Mount point (id or element)
-     * @param {string} basePath            Path prefix before frame index
-     * @param {number} frameCount          Number of frames (e.g. 59 → paths 1..59)
-     * @param {object} opts                Viewer options (color, cameraZ, frameDelay)
-     */
-    static fluidViewer(target, basePath, frameCount = 1, opts = {}) {
-      const mount = FlowVisualization.#resolveTarget(target);
+    static fluidViewer(target, base, n = 1, opts = {}) {
+      const mount = this.#el(target);
 
-      /* loading + error banners */
-      const loading = FlowVisualization.#banner(
-        "Loading simulation frames…",
-        "#facc15"
-      );
-      const error = FlowVisualization.#banner(
-        "Failed to load simulation frames. Please try again later.",
-        "#f87171",
-        true
-      );
-      mount.append(loading, error);
+      const boxId = this.#uid('fluid');
+      const box   = this.#viewerBox(boxId);
+      mount.appendChild(box);
 
-      /* main viewer div */
-      const viewerId = FlowVisualization.#uniqueId("fluid");
-      const viewerDiv = FlowVisualization.#makeViewerDiv(viewerId);
-      mount.appendChild(viewerDiv);
+      /* banner */
+      const loading = this.#banner('Loading frames…', '#facc15');
+      box.appendChild(loading);
 
-      /* controls */
-      const controls = FlowVisualization.#makeControls();
-      mount.appendChild(controls);
+      /* overlay play/pause */
+      const ctrl = this.#overlayButtons();
+      box.appendChild(ctrl);
+
+      /* gizmo */
+      this.#addAxesOverlay(box);            // NEW: orbit widget
 
       /* assemble frame URLs */
-      const frames = Array.from({ length: frameCount }, (_v, i) => `${basePath}${
-        i + 1
-      }.stl`);
-      console.log("[FlowVisualization] STL frames:", frames);
+      const frames = Array.from({ length: n }, (_ ,i)=>`${base}${i+1}.stl`);
+      console.log('[FlowVisualization] STL frames:', frames);
 
-      /* wire buttons */
-      controls.play.addEventListener("click", () => window.playFluid?.());
-      controls.pause.addEventListener("click", () => window.pauseFluid?.());
+      /* wire buttons after viewer attaches its global fns */
+      ctrl.play.onclick  = () => window.playFluid?.();
+      ctrl.pause.onclick = () => window.pauseFluid?.();
 
+      /* run the viewer */
       try {
-        window.FluidSimViewer?.(viewerId, frames, opts);
+        window.FluidSimViewer?.(boxId, frames, opts);
         loading.remove();
-      } catch (e) {
-        console.error("[FlowVisualization] Fluid viewer error:", e);
-        loading.remove();
-        error.style.display = "block";
+      } catch (err) {
+        loading.textContent = 'Failed to load simulation frames';
+        loading.style.color = '#f87171';
+        console.error('[FlowVisualization] Fluid viewer error:', err);
       }
+    }
+
+    /* ---------- mini orbit-gizmo ---------- */
+    // Inspired by CAD Interfaces
+    static #addAxesOverlay(parent) {
+      const w = 100, h = 100;
+      const canvas = document.createElement('canvas');
+      Object.assign(canvas.style, {
+        position: 'absolute',
+        width:  `${w}px`,
+        height: `${h}px`,
+        inset:  '.5rem .5rem auto auto',
+        zIndex: 1,
+        pointerEvents: 'none'
+      });
+      parent.appendChild(canvas);
+
+      const THREE = window.THREE;
+      const r     = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+      r.setSize(w, h);
+
+      const s = new THREE.Scene();
+      const c = new THREE.PerspectiveCamera(50, w/h, .1, 10);
+      c.position.set(1.2,1.2,1.2);
+      c.lookAt(0,0,0);
+      s.add(new THREE.AxesHelper(.8));
+
+      /* keep spinning for visual cue */
+      (function spin() {
+        requestAnimationFrame(spin);
+        s.rotation.y += 0.01;
+        r.render(s,c);
+      })();
     }
   }
 
-  // Expose globally
   window.FlowVisualization = FlowVisualization;
 })();
